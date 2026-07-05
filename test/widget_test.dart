@@ -36,6 +36,27 @@ void main() {
     expect(find.text('Allow location'), findsOneWidget);
   });
 
+  testWidgets('bathroom toggle on travel step shows minutes stepper',
+      (tester) async {
+    // Pixel 3a-sized surface: the overflow only reproduces on narrow screens.
+    tester.view.physicalSize = const Size(1080, 2220);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(const SalatApp(onboarded: false));
+    await tester.pumpAndSettle();
+
+    // Welcome → mosque map → travel step.
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('I need the bathroom before prayer'));
+    await tester.pumpAndSettle();
+    expect(find.text('Minutes for the bathroom'), findsOneWidget);
+  });
+
   testWidgets('home shows countdowns and all five prayers', (tester) async {
     SharedPreferences.setMockInitialValues({
       'onboarding_complete': true,

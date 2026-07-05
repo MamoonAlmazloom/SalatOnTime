@@ -109,8 +109,23 @@ class OnboardingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Sets one bathroom duration for all prayers (the onboarding default);
+  /// per-prayer fine-tuning happens on the offsets step.
   void setBathroomMinutes(int minutes) {
-    settings = settings.copyWith(bathroomMinutes: minutes.clamp(1, 30));
+    final clamped = minutes.clamp(1, 30);
+    settings = settings.copyWith(
+      bathroomMinutes: {for (final p in Prayer.values) p: clamped},
+    );
+    notifyListeners();
+  }
+
+  void setBathroomMinutesFor(Prayer prayer, int minutes) {
+    settings = settings.copyWith(
+      bathroomMinutes: {
+        ...settings.bathroomMinutes,
+        prayer: minutes.clamp(1, 30),
+      },
+    );
     notifyListeners();
   }
 

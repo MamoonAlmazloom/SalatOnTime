@@ -21,7 +21,10 @@ class LeaveTimeCalculator {
     final arrivalTime =
         target == ArrivalTarget.adhan ? adhanTime : iqamaTime;
     final leaveTime = arrivalTime.subtract(
-      Duration(minutes: settings.travelMinutes + settings.preparationMinutes),
+      Duration(
+        minutes:
+            settings.travelMinutes + settings.preparationMinutesFor(prayer),
+      ),
     );
     return PrayerTiming(
       prayer: prayer,

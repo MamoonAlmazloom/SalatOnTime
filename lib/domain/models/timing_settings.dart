@@ -8,7 +8,10 @@ class TimingSettings {
   final bool wuduEnabled;
   final int wuduMinutes;
   final bool bathroomEnabled;
-  final int bathroomMinutes;
+
+  /// Minutes needed for the bathroom before each prayer. Per-prayer because
+  /// needs differ (e.g. a longer routine before Fajr).
+  final Map<Prayer, int> bathroomMinutes;
   final int safetyMarginMinutes;
 
   /// Minutes between adhan and iqama, per prayer.
@@ -25,12 +28,20 @@ class TimingSettings {
     this.wuduEnabled = true,
     this.wuduMinutes = 1,
     this.bathroomEnabled = false,
-    this.bathroomMinutes = 3,
+    this.bathroomMinutes = defaultBathroomMinutes,
     this.safetyMarginMinutes = 0,
     this.iqamaOffsets = defaultIqamaOffsets,
     this.arrivalTargets = defaultArrivalTargets,
     this.alertStyle = AlertStyle.standard,
   });
+
+  static const Map<Prayer, int> defaultBathroomMinutes = {
+    Prayer.fajr: 3,
+    Prayer.dhuhr: 3,
+    Prayer.asr: 3,
+    Prayer.maghrib: 3,
+    Prayer.isha: 3,
+  };
 
   static const Map<Prayer, int> defaultIqamaOffsets = {
     Prayer.fajr: 25,
@@ -48,10 +59,11 @@ class TimingSettings {
     Prayer.isha: ArrivalTarget.iqama,
   };
 
-  /// Total minutes of preparation before travel (wudu, bathroom, margin).
-  int get preparationMinutes =>
+  /// Total minutes of preparation before travel (wudu, bathroom, margin)
+  /// for the given prayer.
+  int preparationMinutesFor(Prayer prayer) =>
       (wuduEnabled ? wuduMinutes : 0) +
-      (bathroomEnabled ? bathroomMinutes : 0) +
+      (bathroomEnabled ? (bathroomMinutes[prayer] ?? 0) : 0) +
       safetyMarginMinutes;
 
   TimingSettings copyWith({
@@ -59,7 +71,7 @@ class TimingSettings {
     bool? wuduEnabled,
     int? wuduMinutes,
     bool? bathroomEnabled,
-    int? bathroomMinutes,
+    Map<Prayer, int>? bathroomMinutes,
     int? safetyMarginMinutes,
     Map<Prayer, int>? iqamaOffsets,
     Map<Prayer, ArrivalTarget>? arrivalTargets,
@@ -83,7 +95,8 @@ class TimingSettings {
         'wuduEnabled': wuduEnabled,
         'wuduMinutes': wuduMinutes,
         'bathroomEnabled': bathroomEnabled,
-        'bathroomMinutes': bathroomMinutes,
+        'bathroomMinutes':
+            bathroomMinutes.map((p, v) => MapEntry(p.name, v)),
         'safetyMarginMinutes': safetyMarginMinutes,
         'iqamaOffsets':
             iqamaOffsets.map((p, v) => MapEntry(p.name, v)),
@@ -98,7 +111,7 @@ class TimingSettings {
       wuduEnabled: json['wuduEnabled'] as bool? ?? true,
       wuduMinutes: json['wuduMinutes'] as int? ?? 1,
       bathroomEnabled: json['bathroomEnabled'] as bool? ?? false,
-      bathroomMinutes: json['bathroomMinutes'] as int? ?? 3,
+      bathroomMinutes: _bathroomMinutesFromJson(json['bathroomMinutes']),
       safetyMarginMinutes: json['safetyMarginMinutes'] as int? ?? 0,
       iqamaOffsets: (json['iqamaOffsets'] as Map<String, dynamic>?)
               ?.map((k, v) => MapEntry(Prayer.fromName(k), v as int)) ??
@@ -109,5 +122,17 @@ class TimingSettings {
           defaultArrivalTargets,
       alertStyle: AlertStyle.fromName(json['alertStyle'] as String? ?? ''),
     );
+  }
+
+  /// Accepts both the current per-prayer map and the legacy single int
+  /// (earlier versions stored one value for all prayers).
+  static Map<Prayer, int> _bathroomMinutesFromJson(Object? raw) {
+    if (raw is int) {
+      return {for (final p in Prayer.values) p: raw};
+    }
+    if (raw is Map<String, dynamic>) {
+      return raw.map((k, v) => MapEntry(Prayer.fromName(k), v as int));
+    }
+    return defaultBathroomMinutes;
   }
 }

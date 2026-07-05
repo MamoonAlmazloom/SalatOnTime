@@ -22,6 +22,7 @@ class StepperRow extends StatelessWidget {
         big ? theme.textTheme.displaySmall : theme.textTheme.titleLarge;
 
     return Row(
+      mainAxisSize: big ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment:
           big ? MainAxisAlignment.center : MainAxisAlignment.end,
       children: [

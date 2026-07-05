@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
 
 import '../../../../data/services/routing_service.dart';
+import '../../../../domain/models/prayer.dart';
 import '../view_models/onboarding_view_model.dart';
 import 'stepper_row.dart';
 
@@ -90,11 +91,12 @@ class TravelStep extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(l10n.bathroomMinutesLabel),
+                Expanded(child: Text(l10n.bathroomMinutesLabel)),
                 StepperRow(
-                  value: viewModel.settings.bathroomMinutes,
+                  value: viewModel
+                          .settings.bathroomMinutes[Prayer.dhuhr] ??
+                      3,
                   unit: l10n.minutesShort,
                   onChanged: viewModel.setBathroomMinutes,
                 ),

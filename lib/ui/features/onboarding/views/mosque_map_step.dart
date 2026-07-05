@@ -58,8 +58,10 @@ class MosqueMapStep extends StatelessWidget {
                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.salatapp.salat_app',
                   ),
-                  const SimpleAttributionWidget(
-                    source: Text('OpenStreetMap contributors'),
+                  RichAttributionWidget(
+                    attributions: [
+                      TextSourceAttribution('OpenStreetMap contributors'),
+                    ],
                   ),
                 ],
               ),

@@ -53,7 +53,13 @@ void main() {
         wuduEnabled: true,
         wuduMinutes: 2,
         bathroomEnabled: true,
-        bathroomMinutes: 3,
+        bathroomMinutes: {
+          Prayer.fajr: 3,
+          Prayer.dhuhr: 3,
+          Prayer.asr: 3,
+          Prayer.maghrib: 3,
+          Prayer.isha: 3,
+        },
         safetyMarginMinutes: 5,
       );
       final t = calculator.compute(
@@ -69,12 +75,44 @@ void main() {
         wuduEnabled: false,
         wuduMinutes: 99,
         bathroomEnabled: false,
-        bathroomMinutes: 99,
+        bathroomMinutes: {
+          Prayer.fajr: 99,
+          Prayer.dhuhr: 99,
+          Prayer.asr: 99,
+          Prayer.maghrib: 99,
+          Prayer.isha: 99,
+        },
       );
       final t = calculator.compute(
           prayer: Prayer.dhuhr, adhanTime: adhan, settings: settings);
 
       expect(t.leaveTime, DateTime(2026, 7, 6, 12, 10)); // 12:20 - 10
+    });
+
+    test('per-prayer bathroom minutes shift leave times independently', () {
+      const settings = TimingSettings(
+        travelMinutes: 10,
+        wuduEnabled: false,
+        bathroomEnabled: true,
+        bathroomMinutes: {
+          Prayer.fajr: 15, // shower before Fajr
+          Prayer.dhuhr: 3,
+          Prayer.asr: 3,
+          Prayer.maghrib: 3,
+          Prayer.isha: 3,
+        },
+      );
+      final fajr = calculator.compute(
+          prayer: Prayer.fajr,
+          adhanTime: DateTime(2026, 7, 6, 3, 39),
+          settings: settings);
+      final dhuhr = calculator.compute(
+          prayer: Prayer.dhuhr, adhanTime: adhan, settings: settings);
+
+      // Fajr: 03:39 + 25 iqama = 04:04, minus 10 + 15 → 03:39
+      expect(fajr.leaveTime, DateTime(2026, 7, 6, 3, 39));
+      // Dhuhr: 12:20 minus 10 + 3 → 12:07
+      expect(dhuhr.leaveTime, DateTime(2026, 7, 6, 12, 7));
     });
 
     test('zero travel: leave exactly at arrival target', () {
@@ -111,7 +149,13 @@ void main() {
         travelMinutes: 7,
         wuduEnabled: false,
         bathroomEnabled: true,
-        bathroomMinutes: 4,
+        bathroomMinutes: {
+          Prayer.fajr: 15, // e.g. shower before Fajr
+          Prayer.dhuhr: 4,
+          Prayer.asr: 4,
+          Prayer.maghrib: 4,
+          Prayer.isha: 4,
+        },
         safetyMarginMinutes: 2,
         alertStyle: AlertStyle.alarm,
         iqamaOffsets: {
@@ -134,13 +178,25 @@ void main() {
       expect(restored.travelMinutes, 7);
       expect(restored.wuduEnabled, false);
       expect(restored.bathroomEnabled, true);
-      expect(restored.bathroomMinutes, 4);
+      expect(restored.bathroomMinutes[Prayer.fajr], 15);
+      expect(restored.bathroomMinutes[Prayer.isha], 4);
       expect(restored.safetyMarginMinutes, 2);
       expect(restored.iqamaOffsets[Prayer.fajr], 30);
       expect(restored.iqamaOffsets[Prayer.maghrib], 10);
       expect(restored.arrivalTargets[Prayer.fajr], ArrivalTarget.adhan);
       expect(restored.arrivalTargets[Prayer.isha], ArrivalTarget.iqama);
       expect(restored.alertStyle, AlertStyle.alarm);
+    });
+
+    test('legacy single-int bathroomMinutes migrates to every prayer', () {
+      final restored = TimingSettings.fromJson({
+        'travelMinutes': 10,
+        'bathroomEnabled': true,
+        'bathroomMinutes': 5, // stored by pre-per-prayer versions
+      });
+      for (final prayer in Prayer.values) {
+        expect(restored.bathroomMinutes[prayer], 5);
+      }
     });
   });
 }

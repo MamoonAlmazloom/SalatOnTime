@@ -41,6 +41,24 @@ class OffsetsStep extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (viewModel.settings.bathroomEnabled) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(l10n.bathroomMinutesLabel,
+                              style: theme.textTheme.bodyMedium),
+                        ),
+                        StepperRow(
+                          value:
+                              viewModel.settings.bathroomMinutes[prayer] ?? 3,
+                          unit: l10n.minutesShort,
+                          onChanged: (v) =>
+                              viewModel.setBathroomMinutesFor(prayer, v),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

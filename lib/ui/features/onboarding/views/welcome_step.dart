@@ -13,12 +13,17 @@ class WelcomeStep extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    // Scrollable so small screens (or large font settings) never overflow;
+    // ConstrainedBox keeps the content vertically centered on tall screens.
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight - 48),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
           Icon(Icons.mosque, size: 96, color: theme.colorScheme.primary),
           const SizedBox(height: 32),
           Text(
@@ -56,7 +61,9 @@ class WelcomeStep extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
           },
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
