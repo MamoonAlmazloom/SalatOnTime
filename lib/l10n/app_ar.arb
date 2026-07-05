@@ -1,0 +1,62 @@
+{
+  "@@locale": "ar",
+  "appTitle": "تطبيق الصلاة",
+  "welcomeTitle": "اوصل مسجدك على الوقت",
+  "welcomeBody": "يخبرك التطبيق باللحظة المناسبة للخروج من البيت لتصل مسجدك على وقت الأذان أو الإقامة بالضبط.\n\nولحساب مواقيت الصلاة بدقة لمنطقتك، يحتاج التطبيق إلى موقعك.",
+  "allowLocation": "السماح بالوصول للموقع",
+  "locationGranted": "تم تحديد موقعك",
+  "locationDeniedNote": "الموقع غير متاح — يمكنك المتابعة. ستبدأ الخريطة من الرياض؛ حرّكها إلى منطقتك.",
+  "stepNext": "التالي",
+  "stepBack": "رجوع",
+  "stepFinish": "إنهاء",
+  "mosqueStepTitle": "اختر مسجدك",
+  "mosqueStepHint": "حرّك الخريطة حتى يقع الدبوس على مسجدك",
+  "mosqueNameLabel": "اسم المسجد",
+  "mosqueNameDefault": "مسجدي",
+  "travelStepTitle": "الوصول للمسجد",
+  "travelMinutesLabel": "الوقت من البيت إلى المسجد (بالدقائق)",
+  "calculateForMe": "احسبها لي",
+  "walking": "مشيًا",
+  "driving": "بالسيارة",
+  "travelCalcFailed": "تعذر حساب المسار — أدخل الدقائق يدويًا.",
+  "travelCalcNeedsLocation": "اسمح بالوصول للموقع في الخطوة الأولى لاستخدام الحساب التلقائي.",
+  "wuduToggle": "أتوضأ قبل الخروج (+{minutes} د)",
+  "@wuduToggle": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "bathroomToggle": "أحتاج دورة المياه قبل الصلاة",
+  "bathroomMinutesLabel": "دقائق دورة المياه",
+  "offsetsStepTitle": "الإقامة في مسجدك",
+  "offsetsStepHint": "كم دقيقة بعد الأذان تقام الصلاة؟ واختر أيضًا هل تريد الوصول عند الأذان أم عند الإقامة.",
+  "arriveBy": "الوصول عند",
+  "targetAdhan": "الأذان",
+  "targetIqama": "الإقامة",
+  "prayerFajr": "الفجر",
+  "prayerDhuhr": "الظهر",
+  "prayerAsr": "العصر",
+  "prayerMaghrib": "المغرب",
+  "prayerIsha": "العشاء",
+  "minutesShort": "د",
+  "homeSetupComplete": "اكتمل الإعداد!",
+  "homeComingSoon": "الشاشة الرئيسية بالعدّادات المباشرة قادمة قريبًا.",
+  "homeMosqueLine": "المسجد: {name}",
+  "@homeMosqueLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeTravelLine": "وقت الوصول: {minutes} د",
+  "@homeTravelLine": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
+}

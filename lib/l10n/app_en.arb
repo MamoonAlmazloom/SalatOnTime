@@ -1,0 +1,62 @@
+{
+  "@@locale": "en",
+  "appTitle": "SalatApp",
+  "welcomeTitle": "Reach your mosque on time",
+  "welcomeBody": "SalatApp tells you the exact moment to leave home so you arrive at your mosque right on time for the adhan or iqama.\n\nTo calculate accurate prayer times for your area, the app needs your location.",
+  "allowLocation": "Allow location",
+  "locationGranted": "Location found",
+  "locationDeniedNote": "Location unavailable — you can still continue. The map will start in Riyadh; drag it to your area.",
+  "stepNext": "Next",
+  "stepBack": "Back",
+  "stepFinish": "Finish",
+  "mosqueStepTitle": "Pick your mosque",
+  "mosqueStepHint": "Move the map until the pin sits on your mosque",
+  "mosqueNameLabel": "Mosque name",
+  "mosqueNameDefault": "My mosque",
+  "travelStepTitle": "Getting there",
+  "travelMinutesLabel": "Time from home to mosque (minutes)",
+  "calculateForMe": "Calculate for me",
+  "walking": "Walking",
+  "driving": "Driving",
+  "travelCalcFailed": "Couldn't calculate the route — please enter the minutes manually.",
+  "travelCalcNeedsLocation": "Allow location in the first step to use automatic calculation.",
+  "wuduToggle": "I make wudu before leaving (+{minutes} min)",
+  "@wuduToggle": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "bathroomToggle": "I need the bathroom before prayer",
+  "bathroomMinutesLabel": "Minutes for the bathroom",
+  "offsetsStepTitle": "Iqama at your mosque",
+  "offsetsStepHint": "How many minutes after the adhan is the iqama held? Choose also whether you want to arrive by the adhan or the iqama.",
+  "arriveBy": "Arrive by",
+  "targetAdhan": "Adhan",
+  "targetIqama": "Iqama",
+  "prayerFajr": "Fajr",
+  "prayerDhuhr": "Dhuhr",
+  "prayerAsr": "Asr",
+  "prayerMaghrib": "Maghrib",
+  "prayerIsha": "Isha",
+  "minutesShort": "min",
+  "homeSetupComplete": "Setup complete!",
+  "homeComingSoon": "The Home screen with live countdowns is coming next.",
+  "homeMosqueLine": "Mosque: {name}",
+  "@homeMosqueLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeTravelLine": "Travel time: {minutes} min",
+  "@homeTravelLine": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
+}
