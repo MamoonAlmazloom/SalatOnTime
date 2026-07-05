@@ -380,6 +380,42 @@ abstract class AppLocalizations {
   /// **'Time to leave for {prayer} 🕌'**
   String notifTitle(String prayer);
 
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @alertStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert style'**
+  String get alertStyleTitle;
+
+  /// No description provided for @alertStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard notification'**
+  String get alertStandard;
+
+  /// No description provided for @alertStandardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A normal notification with the default sound.'**
+  String get alertStandardDesc;
+
+  /// No description provided for @alertAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm style (loud)'**
+  String get alertAlarm;
+
+  /// No description provided for @alertAlarmDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Rings on the alarm volume — sounds even in silent mode on most phones — and shows on the lock screen.'**
+  String get alertAlarmDesc;
+
   /// No description provided for @notifBody.
   ///
   /// In en, this message translates to:

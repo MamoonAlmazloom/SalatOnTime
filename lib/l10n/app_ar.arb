@@ -75,6 +75,12 @@
       }
     }
   },
+  "settingsTitle": "الإعدادات",
+  "alertStyleTitle": "نوع التنبيه",
+  "alertStandard": "إشعار عادي",
+  "alertStandardDesc": "إشعار عادي بالصوت الافتراضي.",
+  "alertAlarm": "منبّه (صوت عالي)",
+  "alertAlarmDesc": "يرن بصوت المنبّه — يسمع حتى في الوضع الصامت في أغلب الأجهزة — ويظهر على شاشة القفل.",
   "notifBody": "اطلع الحين عشان توصل {mosque} لصلاة {prayer} على الوقت.",
   "@notifBody": {
     "placeholders": {

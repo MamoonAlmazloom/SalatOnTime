@@ -1,3 +1,4 @@
+import 'alert_style.dart';
 import 'arrival_target.dart';
 import 'prayer.dart';
 
@@ -16,6 +17,9 @@ class TimingSettings {
   /// Whether the user wants to arrive by adhan or iqama, per prayer.
   final Map<Prayer, ArrivalTarget> arrivalTargets;
 
+  /// How the leave-time alert presents itself.
+  final AlertStyle alertStyle;
+
   const TimingSettings({
     this.travelMinutes = 10,
     this.wuduEnabled = true,
@@ -25,6 +29,7 @@ class TimingSettings {
     this.safetyMarginMinutes = 0,
     this.iqamaOffsets = defaultIqamaOffsets,
     this.arrivalTargets = defaultArrivalTargets,
+    this.alertStyle = AlertStyle.standard,
   });
 
   static const Map<Prayer, int> defaultIqamaOffsets = {
@@ -58,6 +63,7 @@ class TimingSettings {
     int? safetyMarginMinutes,
     Map<Prayer, int>? iqamaOffsets,
     Map<Prayer, ArrivalTarget>? arrivalTargets,
+    AlertStyle? alertStyle,
   }) {
     return TimingSettings(
       travelMinutes: travelMinutes ?? this.travelMinutes,
@@ -68,6 +74,7 @@ class TimingSettings {
       safetyMarginMinutes: safetyMarginMinutes ?? this.safetyMarginMinutes,
       iqamaOffsets: iqamaOffsets ?? this.iqamaOffsets,
       arrivalTargets: arrivalTargets ?? this.arrivalTargets,
+      alertStyle: alertStyle ?? this.alertStyle,
     );
   }
 
@@ -82,6 +89,7 @@ class TimingSettings {
             iqamaOffsets.map((p, v) => MapEntry(p.name, v)),
         'arrivalTargets':
             arrivalTargets.map((p, t) => MapEntry(p.name, t.name)),
+        'alertStyle': alertStyle.name,
       };
 
   factory TimingSettings.fromJson(Map<String, dynamic> json) {
@@ -99,6 +107,7 @@ class TimingSettings {
               (k, v) => MapEntry(
                   Prayer.fromName(k), ArrivalTarget.fromName(v as String))) ??
           defaultArrivalTargets,
+      alertStyle: AlertStyle.fromName(json['alertStyle'] as String? ?? ''),
     );
   }
 }

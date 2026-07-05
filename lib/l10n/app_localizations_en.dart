@@ -164,6 +164,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get alertStyleTitle => 'Alert style';
+
+  @override
+  String get alertStandard => 'Standard notification';
+
+  @override
+  String get alertStandardDesc =>
+      'A normal notification with the default sound.';
+
+  @override
+  String get alertAlarm => 'Alarm style (loud)';
+
+  @override
+  String get alertAlarmDesc =>
+      'Rings on the alarm volume — sounds even in silent mode on most phones — and shows on the lock screen.';
+
+  @override
   String notifBody(String mosque, String prayer) {
     return 'Leave now to reach $mosque for $prayer on time.';
   }

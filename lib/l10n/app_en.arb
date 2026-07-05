@@ -75,6 +75,12 @@
       }
     }
   },
+  "settingsTitle": "Settings",
+  "alertStyleTitle": "Alert style",
+  "alertStandard": "Standard notification",
+  "alertStandardDesc": "A normal notification with the default sound.",
+  "alertAlarm": "Alarm style (loud)",
+  "alertAlarmDesc": "Rings on the alarm volume — sounds even in silent mode on most phones — and shows on the lock screen.",
   "notifBody": "Leave now to reach {mosque} for {prayer} on time.",
   "@notifBody": {
     "placeholders": {

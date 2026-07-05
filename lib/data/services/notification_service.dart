@@ -4,6 +4,8 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../domain/models/alert_style.dart';
+
 /// Schedules local "leave home now" notifications. All plugin calls are
 /// guarded: on platforms/tests without the plugin they silently no-op.
 class NotificationService {
@@ -58,27 +60,50 @@ class NotificationService {
     }
   }
 
+  static const _standardDetails = NotificationDetails(
+    android: AndroidNotificationDetails(
+      'leave_alerts',
+      'Leave-time alerts | تنبيهات وقت الخروج',
+      channelDescription:
+          'Alerts fired when it is time to leave home for prayer',
+      importance: Importance.max,
+      priority: Priority.high,
+      category: AndroidNotificationCategory.reminder,
+    ),
+    iOS: DarwinNotificationDetails(
+      interruptionLevel: InterruptionLevel.timeSensitive,
+    ),
+  );
+
+  /// Alarm-style: plays on the alarm audio stream (rings through silent
+  /// mode on most devices) and takes the screen when the phone is locked.
+  static const _alarmDetails = NotificationDetails(
+    android: AndroidNotificationDetails(
+      'leave_alerts_alarm',
+      'Alarm-style leave alerts | تنبيهات بصوت المنبّه',
+      channelDescription:
+          'Loud alarm-like alerts fired when it is time to leave for prayer',
+      importance: Importance.max,
+      priority: Priority.max,
+      category: AndroidNotificationCategory.alarm,
+      audioAttributesUsage: AudioAttributesUsage.alarm,
+      fullScreenIntent: true,
+    ),
+    iOS: DarwinNotificationDetails(
+      interruptionLevel: InterruptionLevel.timeSensitive,
+    ),
+  );
+
   /// Cancels everything and schedules the given alerts.
   Future<void> scheduleAll(
-    List<({int id, String title, String body, DateTime when})> alerts,
-  ) async {
+    List<({int id, String title, String body, DateTime when})> alerts, {
+    AlertStyle style = AlertStyle.standard,
+  }) async {
     if (!_ready) return;
     try {
       await _plugin.cancelAll();
-      const details = NotificationDetails(
-        android: AndroidNotificationDetails(
-          'leave_alerts',
-          'Leave-time alerts | تنبيهات وقت الخروج',
-          channelDescription:
-              'Alerts fired when it is time to leave home for prayer',
-          importance: Importance.max,
-          priority: Priority.high,
-          category: AndroidNotificationCategory.reminder,
-        ),
-        iOS: DarwinNotificationDetails(
-          interruptionLevel: InterruptionLevel.timeSensitive,
-        ),
-      );
+      final details =
+          style == AlertStyle.alarm ? _alarmDetails : _standardDetails;
       for (final alert in alerts) {
         Future<void> schedule(AndroidScheduleMode mode) => _plugin.zonedSchedule(
               id: alert.id,

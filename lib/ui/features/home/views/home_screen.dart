@@ -8,6 +8,7 @@ import '../../../../data/services/notification_service.dart';
 import '../../../../domain/models/prayer_timing.dart';
 import '../../../../domain/use_cases/next_prayer_resolver.dart';
 import '../../../core/prayer_names.dart';
+import '../../settings/views/settings_screen.dart';
 import '../view_models/home_view_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -85,7 +86,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.appTitle)),
+      appBar: AppBar(
+        title: Text(l10n.appTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+              await _viewModel.refresh();
+            },
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, _) {

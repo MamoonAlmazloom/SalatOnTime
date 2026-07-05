@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:salat_app/domain/models/alert_style.dart';
 import 'package:salat_app/domain/models/arrival_target.dart';
 import 'package:salat_app/domain/models/prayer.dart';
 import 'package:salat_app/domain/models/timing_settings.dart';
@@ -112,6 +113,7 @@ void main() {
         bathroomEnabled: true,
         bathroomMinutes: 4,
         safetyMarginMinutes: 2,
+        alertStyle: AlertStyle.alarm,
         iqamaOffsets: {
           Prayer.fajr: 30,
           Prayer.dhuhr: 20,
@@ -138,6 +140,7 @@ void main() {
       expect(restored.iqamaOffsets[Prayer.maghrib], 10);
       expect(restored.arrivalTargets[Prayer.fajr], ArrivalTarget.adhan);
       expect(restored.arrivalTargets[Prayer.isha], ArrivalTarget.iqama);
+      expect(restored.alertStyle, AlertStyle.alarm);
     });
   });
 }

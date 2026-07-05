@@ -122,15 +122,28 @@ class HomeViewModel extends ChangeNotifier {
       now: now,
       days: [today, tomorrow, dayAfter],
     );
-    await _notifications.scheduleAll([
-      for (final alert in alerts)
-        (
-          id: alert.id,
-          title: texts.title(alert.timing.prayer),
-          body: texts.body(alert.timing.prayer, m.name),
-          when: alert.timing.leaveTime,
-        ),
-    ]);
+    await _notifications.scheduleAll(
+      [
+        for (final alert in alerts)
+          (
+            id: alert.id,
+            title: texts.title(alert.timing.prayer),
+            body: texts.body(alert.timing.prayer, m.name),
+            when: alert.timing.leaveTime,
+          ),
+      ],
+      style: settings.alertStyle,
+    );
+  }
+
+  /// Re-reads settings from storage (e.g. after the Settings screen closes)
+  /// and rebuilds schedules + notifications.
+  Future<void> refresh() async {
+    settings = await _repository.loadSettings();
+    mosque = await _repository.loadMosque();
+    _rebuildSchedules(DateTime.now());
+    _tick();
+    await _syncNotifications();
   }
 
   @override

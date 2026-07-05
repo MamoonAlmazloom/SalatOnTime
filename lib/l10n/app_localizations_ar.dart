@@ -163,6 +163,25 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get alertStyleTitle => 'نوع التنبيه';
+
+  @override
+  String get alertStandard => 'إشعار عادي';
+
+  @override
+  String get alertStandardDesc => 'إشعار عادي بالصوت الافتراضي.';
+
+  @override
+  String get alertAlarm => 'منبّه (صوت عالي)';
+
+  @override
+  String get alertAlarmDesc =>
+      'يرن بصوت المنبّه — يسمع حتى في الوضع الصامت في أغلب الأجهزة — ويظهر على شاشة القفل.';
+
+  @override
   String notifBody(String mosque, String prayer) {
     return 'اطلع الحين عشان توصل $mosque لصلاة $prayer على الوقت.';
   }
