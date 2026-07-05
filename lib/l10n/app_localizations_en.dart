@@ -133,4 +133,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeTravelLine(int minutes) {
     return 'Travel time: $minutes min';
   }
+
+  @override
+  String get adhanIn => 'Adhan in';
+
+  @override
+  String get iqamaIn => 'Iqama in';
+
+  @override
+  String get leaveIn => 'Leave home in';
+
+  @override
+  String get leaveNow => 'Leave now!';
+
+  @override
+  String get adhanPassed => 'Adhan called';
+
+  @override
+  String get todaysPrayers => 'Today\'s prayers';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
 }

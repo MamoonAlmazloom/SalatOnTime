@@ -58,5 +58,13 @@
         "type": "int"
       }
     }
-  }
+  },
+  "adhanIn": "الأذان بعد",
+  "iqamaIn": "الإقامة بعد",
+  "leaveIn": "الخروج من البيت بعد",
+  "leaveNow": "اطلع الحين!",
+  "adhanPassed": "أُذّن",
+  "todaysPrayers": "صلوات اليوم",
+  "save": "حفظ",
+  "cancel": "إلغاء"
 }

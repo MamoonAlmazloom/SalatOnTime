@@ -132,4 +132,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String homeTravelLine(int minutes) {
     return 'وقت الوصول: $minutes د';
   }
+
+  @override
+  String get adhanIn => 'الأذان بعد';
+
+  @override
+  String get iqamaIn => 'الإقامة بعد';
+
+  @override
+  String get leaveIn => 'الخروج من البيت بعد';
+
+  @override
+  String get leaveNow => 'اطلع الحين!';
+
+  @override
+  String get adhanPassed => 'أُذّن';
+
+  @override
+  String get todaysPrayers => 'صلوات اليوم';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get cancel => 'إلغاء';
 }

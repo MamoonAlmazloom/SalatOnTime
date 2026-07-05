@@ -325,6 +325,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Travel time: {minutes} min'**
   String homeTravelLine(int minutes);
+
+  /// No description provided for @adhanIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan in'**
+  String get adhanIn;
+
+  /// No description provided for @iqamaIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Iqama in'**
+  String get iqamaIn;
+
+  /// No description provided for @leaveIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave home in'**
+  String get leaveIn;
+
+  /// No description provided for @leaveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave now!'**
+  String get leaveNow;
+
+  /// No description provided for @adhanPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhan called'**
+  String get adhanPassed;
+
+  /// No description provided for @todaysPrayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s prayers'**
+  String get todaysPrayers;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate

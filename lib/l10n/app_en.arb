@@ -58,5 +58,13 @@
         "type": "int"
       }
     }
-  }
+  },
+  "adhanIn": "Adhan in",
+  "iqamaIn": "Iqama in",
+  "leaveIn": "Leave home in",
+  "leaveNow": "Leave now!",
+  "adhanPassed": "Adhan called",
+  "todaysPrayers": "Today's prayers",
+  "save": "Save",
+  "cancel": "Cancel"
 }
