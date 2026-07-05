@@ -373,6 +373,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @notifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to leave for {prayer} 🕌'**
+  String notifTitle(String prayer);
+
+  /// No description provided for @notifBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave now to reach {mosque} for {prayer} on time.'**
+  String notifBody(String mosque, String prayer);
 }
 
 class _AppLocalizationsDelegate

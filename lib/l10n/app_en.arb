@@ -66,5 +66,24 @@
   "adhanPassed": "Adhan called",
   "todaysPrayers": "Today's prayers",
   "save": "Save",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "notifTitle": "Time to leave for {prayer} 🕌",
+  "@notifTitle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "notifBody": "Leave now to reach {mosque} for {prayer} on time.",
+  "@notifBody": {
+    "placeholders": {
+      "mosque": {
+        "type": "String"
+      },
+      "prayer": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:salat_app/l10n/app_localizations.dart';
 
 import 'data/repositories/settings_repository.dart';
 import 'data/services/location_service.dart';
+import 'data/services/notification_service.dart';
 import 'data/services/routing_service.dart';
 import 'ui/features/home/views/home_screen.dart';
 import 'ui/features/onboarding/view_models/onboarding_view_model.dart';
@@ -10,6 +11,7 @@ import 'ui/features/onboarding/views/onboarding_flow.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.instance.initialize();
   final repository = SettingsRepository();
   final onboarded = await repository.isOnboardingComplete();
   runApp(SalatApp(onboarded: onboarded));

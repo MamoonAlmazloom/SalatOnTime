@@ -157,4 +157,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String notifTitle(String prayer) {
+    return 'Time to leave for $prayer 🕌';
+  }
+
+  @override
+  String notifBody(String mosque, String prayer) {
+    return 'Leave now to reach $mosque for $prayer on time.';
+  }
 }

@@ -4,13 +4,17 @@ import 'package:intl/intl.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
 
 import '../../../../data/repositories/settings_repository.dart';
+import '../../../../data/services/notification_service.dart';
 import '../../../../domain/models/prayer_timing.dart';
 import '../../../../domain/use_cases/next_prayer_resolver.dart';
 import '../../../core/prayer_names.dart';
 import '../view_models/home_view_model.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.notificationService});
+
+  /// Injectable so the app can pass the instance initialized in main().
+  final NotificationService? notificationService;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,7 +26,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = HomeViewModel(repository: SettingsRepository())..load();
+    _viewModel = HomeViewModel(
+      repository: SettingsRepository(),
+      notifications: widget.notificationService ?? NotificationService.instance,
+    )..load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    _viewModel.notificationTexts = NotificationTexts(
+      title: (prayer) => l10n.notifTitle(prayerName(l10n, prayer)),
+      body: (prayer, mosqueName) =>
+          l10n.notifBody(mosqueName, prayerName(l10n, prayer)),
+    );
   }
 
   @override

@@ -66,5 +66,24 @@
   "adhanPassed": "أُذّن",
   "todaysPrayers": "صلوات اليوم",
   "save": "حفظ",
-  "cancel": "إلغاء"
+  "cancel": "إلغاء",
+  "notifTitle": "حان وقت الخروج لصلاة {prayer} 🕌",
+  "@notifTitle": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  "notifBody": "اطلع الحين عشان توصل {mosque} لصلاة {prayer} على الوقت.",
+  "@notifBody": {
+    "placeholders": {
+      "mosque": {
+        "type": "String"
+      },
+      "prayer": {
+        "type": "String"
+      }
+    }
+  }
 }
