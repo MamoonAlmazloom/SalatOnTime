@@ -160,6 +160,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                _SectionTitle(l10n.language),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: ValueListenableBuilder<Locale?>(
+                      valueListenable: localeNotifier,
+                      builder: (context, locale, _) =>
+                          SegmentedButton<String>(
+                        expandedInsets: EdgeInsets.zero,
+                        segments: [
+                          ButtonSegment(
+                            value: 'system',
+                            label: Text(l10n.themeSystem),
+                          ),
+                          const ButtonSegment(
+                            value: 'ar',
+                            label: Text('العربية'),
+                          ),
+                          const ButtonSegment(
+                            value: 'en',
+                            label: Text('English'),
+                          ),
+                        ],
+                        selected: {locale?.languageCode ?? 'system'},
+                        onSelectionChanged: (selection) {
+                          final name = selection.first;
+                          localeNotifier.value = localeFromName(name);
+                          _repository.saveLocaleName(name);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 _SectionTitle(l10n.alertStyleTitle),
                 Card(
                   child: RadioGroup<AlertStyle>(

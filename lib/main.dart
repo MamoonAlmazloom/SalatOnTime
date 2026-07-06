@@ -18,6 +18,7 @@ Future<void> main() async {
   final onboarded = await repository.isOnboardingComplete();
   themeModeNotifier.value =
       themeModeFromName(await repository.loadThemeModeName());
+  localeNotifier.value = localeFromName(await repository.loadLocaleName());
   runApp(SalatApp(onboarded: onboarded));
 }
 
@@ -28,15 +29,16 @@ class SalatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeModeNotifier,
-      builder: (context, mode, _) => MaterialApp(
+    return ListenableBuilder(
+      listenable: Listenable.merge([themeModeNotifier, localeNotifier]),
+      builder: (context, _) => MaterialApp(
         onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         theme: AppTheme.light(),
         darkTheme: AppTheme.dark(),
-        themeMode: mode,
+        themeMode: themeModeNotifier.value,
+        locale: localeNotifier.value,
         home: onboarded
             ? const HomeScreen()
             : OnboardingFlow(

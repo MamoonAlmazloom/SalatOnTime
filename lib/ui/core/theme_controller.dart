@@ -10,3 +10,12 @@ ThemeMode themeModeFromName(String? name) => switch (name) {
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
+
+/// App-wide locale override. Null means "follow the system language".
+final ValueNotifier<Locale?> localeNotifier = ValueNotifier(null);
+
+Locale? localeFromName(String? name) => switch (name) {
+      'ar' => const Locale('ar'),
+      'en' => const Locale('en'),
+      _ => null,
+    };

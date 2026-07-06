@@ -14,6 +14,7 @@ class SettingsRepository {
   static const _kHomeLat = 'home_latitude';
   static const _kHomeLng = 'home_longitude';
   static const _kThemeMode = 'theme_mode';
+  static const _kLocale = 'locale';
 
   Future<bool> isOnboardingComplete() async {
     final prefs = await SharedPreferences.getInstance();
@@ -84,5 +85,16 @@ class SettingsRepository {
   Future<void> saveThemeModeName(String name) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kThemeMode, name);
+  }
+
+  /// Locale name: 'system' (default), 'ar', or 'en'.
+  Future<String?> loadLocaleName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kLocale);
+  }
+
+  Future<void> saveLocaleName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kLocale, name);
   }
 }
