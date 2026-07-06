@@ -166,6 +166,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsTitle => 'الإعدادات';
 
   @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get themeSystem => 'تلقائي';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get sectionMosque => 'المسجد والموقع';
+
+  @override
+  String get changeMosque => 'تغيير المسجد';
+
+  @override
+  String get updateHomeLocation => 'تحديث موقع المنزل';
+
+  @override
+  String get homeLocationUpdated => 'تم تحديث موقع المنزل';
+
+  @override
+  String get homeLocationFailed => 'تعذر تحديد موقعك';
+
+  @override
+  String get sectionTiming => 'التوقيت';
+
+  @override
+  String get safetyMarginLabel => 'هامش أمان (دقائق)';
+
+  @override
+  String get sectionPerPrayer => 'إعدادات كل صلاة';
+
+  @override
   String get alertStyleTitle => 'نوع التنبيه';
 
   @override

@@ -167,6 +167,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'Auto';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get sectionMosque => 'Mosque & location';
+
+  @override
+  String get changeMosque => 'Change mosque';
+
+  @override
+  String get updateHomeLocation => 'Update home location';
+
+  @override
+  String get homeLocationUpdated => 'Home location updated';
+
+  @override
+  String get homeLocationFailed => 'Couldn\'t get your location';
+
+  @override
+  String get sectionTiming => 'Timing';
+
+  @override
+  String get safetyMarginLabel => 'Safety margin (minutes)';
+
+  @override
+  String get sectionPerPrayer => 'Per-prayer settings';
+
+  @override
   String get alertStyleTitle => 'Alert style';
 
   @override

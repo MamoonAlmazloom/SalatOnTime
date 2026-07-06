@@ -386,6 +386,78 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @sectionMosque.
+  ///
+  /// In en, this message translates to:
+  /// **'Mosque & location'**
+  String get sectionMosque;
+
+  /// No description provided for @changeMosque.
+  ///
+  /// In en, this message translates to:
+  /// **'Change mosque'**
+  String get changeMosque;
+
+  /// No description provided for @updateHomeLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Update home location'**
+  String get updateHomeLocation;
+
+  /// No description provided for @homeLocationUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Home location updated'**
+  String get homeLocationUpdated;
+
+  /// No description provided for @homeLocationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get your location'**
+  String get homeLocationFailed;
+
+  /// No description provided for @sectionTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Timing'**
+  String get sectionTiming;
+
+  /// No description provided for @safetyMarginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety margin (minutes)'**
+  String get safetyMarginLabel;
+
+  /// No description provided for @sectionPerPrayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-prayer settings'**
+  String get sectionPerPrayer;
+
   /// No description provided for @alertStyleTitle.
   ///
   /// In en, this message translates to:

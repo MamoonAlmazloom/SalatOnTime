@@ -6,6 +6,7 @@ import 'data/services/location_service.dart';
 import 'data/services/notification_service.dart';
 import 'data/services/routing_service.dart';
 import 'ui/core/app_theme.dart';
+import 'ui/core/theme_controller.dart';
 import 'ui/features/home/views/home_screen.dart';
 import 'ui/features/onboarding/view_models/onboarding_view_model.dart';
 import 'ui/features/onboarding/views/onboarding_flow.dart';
@@ -15,6 +16,8 @@ Future<void> main() async {
   await NotificationService.instance.initialize();
   final repository = SettingsRepository();
   final onboarded = await repository.isOnboardingComplete();
+  themeModeNotifier.value =
+      themeModeFromName(await repository.loadThemeModeName());
   runApp(SalatApp(onboarded: onboarded));
 }
 
@@ -25,21 +28,25 @@ class SalatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      home: onboarded
-          ? const HomeScreen()
-          : OnboardingFlow(
-              viewModel: OnboardingViewModel(
-                locationService: const LocationService(),
-                routingService: RoutingService(),
-                repository: SettingsRepository(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeModeNotifier,
+      builder: (context, mode, _) => MaterialApp(
+        onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode: mode,
+        home: onboarded
+            ? const HomeScreen()
+            : OnboardingFlow(
+                viewModel: OnboardingViewModel(
+                  locationService: const LocationService(),
+                  routingService: RoutingService(),
+                  repository: SettingsRepository(),
+                ),
               ),
-            ),
+      ),
     );
   }
 }

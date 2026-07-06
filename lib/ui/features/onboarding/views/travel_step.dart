@@ -3,8 +3,8 @@ import 'package:salat_app/l10n/app_localizations.dart';
 
 import '../../../../data/services/routing_service.dart';
 import '../../../../domain/models/prayer.dart';
+import '../../../core/widgets/stepper_row.dart';
 import '../view_models/onboarding_view_model.dart';
-import 'stepper_row.dart';
 
 class TravelStep extends StatelessWidget {
   const TravelStep({super.key, required this.viewModel});

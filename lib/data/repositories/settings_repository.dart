@@ -13,6 +13,7 @@ class SettingsRepository {
   static const _kOnboarded = 'onboarding_complete';
   static const _kHomeLat = 'home_latitude';
   static const _kHomeLng = 'home_longitude';
+  static const _kThemeMode = 'theme_mode';
 
   Future<bool> isOnboardingComplete() async {
     final prefs = await SharedPreferences.getInstance();
@@ -66,5 +67,22 @@ class SettingsRepository {
     final lng = prefs.getDouble(_kHomeLng);
     if (lat == null || lng == null) return null;
     return (latitude: lat, longitude: lng);
+  }
+
+  Future<void> saveHomeLocation(double latitude, double longitude) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(_kHomeLat, latitude);
+    await prefs.setDouble(_kHomeLng, longitude);
+  }
+
+  /// Theme mode name: 'system' (default), 'light', or 'dark'.
+  Future<String?> loadThemeModeName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kThemeMode);
+  }
+
+  Future<void> saveThemeModeName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kThemeMode, name);
   }
 }
