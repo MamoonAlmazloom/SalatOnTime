@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
 
+import '../../../core/app_theme.dart';
 import '../view_models/onboarding_view_model.dart';
 
 class WelcomeStep extends StatelessWidget {
@@ -24,7 +25,24 @@ class WelcomeStep extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-          Icon(Icons.mosque, size: 96, color: theme.colorScheme.primary),
+          Center(
+            child: Container(
+              width: 132,
+              height: 132,
+              decoration: BoxDecoration(
+                gradient: AppTheme.heroGradient(theme.colorScheme),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.seed.withValues(alpha: 0.35),
+                    blurRadius: 28,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.mosque, size: 64, color: Colors.white),
+            ),
+          ),
           const SizedBox(height: 32),
           Text(
             l10n.welcomeTitle,
@@ -54,11 +72,21 @@ class WelcomeStep extends StatelessWidget {
                   Text(l10n.locationGranted),
                 ],
               ),
-            LocationState.denied => Text(
-                l10n.locationDeniedNote,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: theme.colorScheme.error),
-                textAlign: TextAlign.center,
+            LocationState.denied => Column(
+                children: [
+                  Text(
+                    l10n.locationDeniedNote,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: theme.colorScheme.error),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: viewModel.requestLocation,
+                    icon: const Icon(Icons.refresh),
+                    label: Text(l10n.allowLocation),
+                  ),
+                ],
               ),
           },
             ],

@@ -5,6 +5,7 @@ import 'data/repositories/settings_repository.dart';
 import 'data/services/location_service.dart';
 import 'data/services/notification_service.dart';
 import 'data/services/routing_service.dart';
+import 'ui/core/app_theme.dart';
 import 'ui/features/home/views/home_screen.dart';
 import 'ui/features/onboarding/view_models/onboarding_view_model.dart';
 import 'ui/features/onboarding/views/onboarding_flow.dart';
@@ -28,15 +29,8 @@ class SalatApp extends StatelessWidget {
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00695C)),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00695C),
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
       home: onboarded
           ? const HomeScreen()
           : OnboardingFlow(
