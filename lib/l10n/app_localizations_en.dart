@@ -206,6 +206,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionPerPrayer => 'Per-prayer settings';
 
   @override
+  String get about => 'About';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get calcMethodNote => 'Prayer time calculation method';
+
+  @override
   String get alertStyleTitle => 'Alert style';
 
   @override

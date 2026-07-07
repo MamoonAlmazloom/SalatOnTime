@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../data/repositories/settings_repository.dart';
 import '../../../../data/services/location_service.dart';
@@ -345,6 +346,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         const SizedBox(height: 8),
                       ],
                     ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _SectionTitle(l10n.about),
+                Card(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.privacy_tip_outlined),
+                        title: Text(l10n.privacyPolicy),
+                        trailing: const Icon(Icons.open_in_new, size: 18),
+                        onTap: () => launchUrl(
+                          Uri.parse(
+                              'https://mamoonalmazloom.github.io/SalatOnTime/privacy-policy'),
+                          mode: LaunchMode.externalApplication,
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.calculate_outlined),
+                        title: Text(l10n.calcMethodNote),
+                        subtitle: const Text('Umm al-Qura'),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 20),

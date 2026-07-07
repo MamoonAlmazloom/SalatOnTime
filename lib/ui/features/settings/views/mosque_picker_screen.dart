@@ -81,7 +81,7 @@ class _MosquePickerScreenState extends State<MosquePickerScreen> {
                     TileLayer(
                       urlTemplate:
                           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.salatapp.salat_app',
+                      userAgentPackageName: 'io.github.mamoonalmazloom.salatontime',
                     ),
                     RichAttributionWidget(
                       attributions: [

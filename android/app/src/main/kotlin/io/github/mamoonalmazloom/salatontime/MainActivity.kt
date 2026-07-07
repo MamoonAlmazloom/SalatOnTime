@@ -1,4 +1,4 @@
-package com.salatapp.salat_app
+package io.github.mamoonalmazloom.salatontime
 
 import io.flutter.embedding.android.FlutterActivity
 

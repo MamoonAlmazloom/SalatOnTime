@@ -205,6 +205,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sectionPerPrayer => 'إعدادات كل صلاة';
 
   @override
+  String get about => 'حول التطبيق';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get calcMethodNote => 'طريقة حساب مواقيت الصلاة';
+
+  @override
   String get alertStyleTitle => 'نوع التنبيه';
 
   @override

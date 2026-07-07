@@ -464,6 +464,24 @@ abstract class AppLocalizations {
   /// **'Per-prayer settings'**
   String get sectionPerPrayer;
 
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @calcMethodNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer time calculation method'**
+  String get calcMethodNote;
+
   /// No description provided for @alertStyleTitle.
   ///
   /// In en, this message translates to:
