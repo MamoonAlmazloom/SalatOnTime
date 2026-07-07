@@ -1,3 +1,8 @@
+---
+title: Privacy Policy — Salat On Time
+permalink: /privacy-policy
+---
+
 # Privacy Policy — Salat On Time | سياسة الخصوصية — الصلاة على وقتها
 
 _Last updated: July 6, 2026_
