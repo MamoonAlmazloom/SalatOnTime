@@ -13,13 +13,14 @@ import '../../../../domain/use_cases/leave_time_calculator.dart';
 import '../../../../domain/use_cases/next_prayer_resolver.dart';
 import '../../../../domain/use_cases/upcoming_alerts.dart';
 
-/// Builders for localized notification text, injected from the widget layer
-/// (view models have no BuildContext).
+/// Builds localized notification text, injected from the widget layer
+/// (view models have no BuildContext). [seed] selects one of the rotating
+/// ayah/hadith message variants.
 class NotificationTexts {
-  final String Function(Prayer prayer) title;
-  final String Function(Prayer prayer, String mosqueName) body;
+  final ({String title, String body}) Function(
+      Prayer prayer, String mosqueName, int seed) build;
 
-  const NotificationTexts({required this.title, required this.body});
+  const NotificationTexts({required this.build});
 }
 
 /// Drives the Home screen: loads configuration, builds today's and
@@ -125,12 +126,21 @@ class HomeViewModel extends ChangeNotifier {
     await _notifications.scheduleAll(
       [
         for (final alert in alerts)
-          (
-            id: alert.id,
-            title: texts.title(alert.timing.prayer),
-            body: texts.body(alert.timing.prayer, m.name),
-            when: alert.timing.leaveTime,
-          ),
+          () {
+            // Seed varies by prayer (id) and by calendar day so the same
+            // prayer gets a different message tomorrow.
+            final message = texts.build(
+              alert.timing.prayer,
+              m.name,
+              alert.id + alert.timing.leaveTime.day * 3,
+            );
+            return (
+              id: alert.id,
+              title: message.title,
+              body: message.body,
+              when: alert.timing.leaveTime,
+            );
+          }(),
       ],
       style: settings.alertStyle,
     );

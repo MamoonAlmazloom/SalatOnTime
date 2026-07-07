@@ -7,6 +7,7 @@ import '../../../../data/repositories/settings_repository.dart';
 import '../../../../data/services/notification_service.dart';
 import '../../../../domain/models/prayer_timing.dart';
 import '../../../../domain/use_cases/next_prayer_resolver.dart';
+import '../../../core/alert_messages.dart';
 import '../../../core/app_theme.dart';
 import '../../../core/prayer_icons.dart';
 import '../../../core/prayer_names.dart';
@@ -39,10 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final l10n = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
     _viewModel.notificationTexts = NotificationTexts(
-      title: (prayer) => l10n.notifTitle(prayerName(l10n, prayer)),
-      body: (prayer, mosqueName) =>
-          l10n.notifBody(mosqueName, prayerName(l10n, prayer)),
+      build: (prayer, mosqueName, seed) => AlertMessages.pick(
+        languageCode: languageCode,
+        seed: seed,
+        prayerName: prayerName(l10n, prayer),
+        mosqueName: mosqueName,
+      ),
     );
   }
 
