@@ -15,7 +15,6 @@ void main() {
             languageCode: lang,
             seed: seed,
             prayerName: 'الفجر',
-            mosqueName: 'مسجد النور',
           );
           expect(m.title.contains('{'), isFalse,
               reason: '$lang/$seed title: ${m.title}');
@@ -33,7 +32,6 @@ void main() {
             languageCode: 'en',
             seed: seed,
             prayerName: 'Fajr',
-            mosqueName: 'Mosque',
           ).title,
       };
       expect(titles.length, greaterThan(5));
@@ -44,7 +42,6 @@ void main() {
         languageCode: 'fr',
         seed: 0,
         prayerName: 'Fajr',
-        mosqueName: 'Mosque',
       );
       expect(m.title, contains('Fajr'));
     });

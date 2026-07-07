@@ -42,11 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final l10n = AppLocalizations.of(context)!;
     final languageCode = Localizations.localeOf(context).languageCode;
     _viewModel.notificationTexts = NotificationTexts(
-      build: (prayer, mosqueName, seed) => AlertMessages.pick(
+      build: (prayer, seed) => AlertMessages.pick(
         languageCode: languageCode,
         seed: seed,
         prayerName: prayerName(l10n, prayer),
-        mosqueName: mosqueName,
       ),
     );
   }

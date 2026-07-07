@@ -17,8 +17,7 @@ import '../../../../domain/use_cases/upcoming_alerts.dart';
 /// (view models have no BuildContext). [seed] selects one of the rotating
 /// ayah/hadith message variants.
 class NotificationTexts {
-  final ({String title, String body}) Function(
-      Prayer prayer, String mosqueName, int seed) build;
+  final ({String title, String body}) Function(Prayer prayer, int seed) build;
 
   const NotificationTexts({required this.build});
 }
@@ -131,7 +130,6 @@ class HomeViewModel extends ChangeNotifier {
             // prayer gets a different message tomorrow.
             final message = texts.build(
               alert.timing.prayer,
-              m.name,
               alert.id + alert.timing.leaveTime.day * 3,
             );
             return (
