@@ -84,6 +84,11 @@ alarm-style channel. Theme/locale: `themeModeNotifier` / `localeNotifier`
 Logo decision (mark-studies sheet shown to user; dome-dial recommended),
 store listing assets (feature graphic via canvas-design, screenshots, ar/en
 copy), real-device testing pass, then Play Store submission.
+
+Post-launch ideas (assessed, deliberately deferred): travel-awareness banner
+(foreground-only distance check against saved mosques — NOT background
+location, NOT tz-by-coordinates; times are absolute instants so timezones/DST
+are already correct whenever the user is near their mosque).
 Skill available for graphics work: `.agents/skills/canvas-design` (official Anthropic).
 
 ## graphify

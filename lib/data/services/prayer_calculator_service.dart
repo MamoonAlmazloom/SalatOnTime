@@ -22,6 +22,8 @@ class PrayerCalculatorService {
         'moonsightingCommittee' =>
           adhan.CalculationMethodParameters.moonsightingCommittee(),
         'singapore' => adhan.CalculationMethodParameters.singapore(),
+        // JAKIM uses the same convention as Singapore (Fajr 20°, Isha 18°).
+        'malaysia' => adhan.CalculationMethodParameters.singapore(),
         'indonesian' => adhan.CalculationMethodParameters.indonesian(),
         'turkiye' => adhan.CalculationMethodParameters.turkiye(),
         'morocco' => adhan.CalculationMethodParameters.morocco(),

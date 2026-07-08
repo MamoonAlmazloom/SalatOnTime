@@ -30,6 +30,7 @@ const calculationMethodOptions = <CalculationMethodOption>[
   CalculationMethodOption('moonsightingCommittee', 'Moonsighting Committee',
       'لجنة تحري رؤية الهلال'),
   CalculationMethodOption('singapore', 'Singapore', 'سنغافورة'),
+  CalculationMethodOption('malaysia', 'Malaysia (JAKIM)', 'ماليزيا (جاكيم)'),
   CalculationMethodOption('indonesian', 'Indonesia', 'إندونيسيا'),
   CalculationMethodOption('turkiye', 'Türkiye (Diyanet)', 'تركيا (ديانت)'),
   CalculationMethodOption('morocco', 'Morocco', 'المغرب'),
