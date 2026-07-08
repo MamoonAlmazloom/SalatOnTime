@@ -46,3 +46,4 @@ app.*.map.json
 
 # Graphify generated knowledge graph
 graphify-out/
+scratch_*.png
