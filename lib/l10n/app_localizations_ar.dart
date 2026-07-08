@@ -142,6 +142,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jumuahTravelLabel => 'الوقت إلى مسجد الجمعة (بالدقائق)';
 
   @override
+  String get sectionWorkPlace => 'مكان ثانٍ (عمل / دراسة)';
+
+  @override
+  String get workProfileToggle => 'أصلي بعض الصلوات قرب العمل أو الدراسة';
+
+  @override
+  String get workProfileHint =>
+      'في الأيام التي تختارها، تُحسب الصلوات المختارة لهذا المكان: مسجده ووقت الطريق إليه.';
+
+  @override
+  String get workTravelLabel => 'الوقت من هذا المكان إلى مسجده (بالدقائق)';
+
+  @override
+  String get workPrayersLabel => 'الصلوات في هذا المكان';
+
+  @override
+  String get workDaysLabel => 'الأيام';
+
+  @override
   String get minutesShort => 'د';
 
   @override

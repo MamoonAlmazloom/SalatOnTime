@@ -185,12 +185,12 @@ class NotificationService {
     );
   }
 
-  /// Cancels everything and schedules the given alerts. [subText] shows in
-  /// the notification header (e.g. the mosque name).
+  /// Cancels everything and schedules the given alerts. Each alert's
+  /// [subText] shows in the notification header (the mosque it points to).
   Future<void> scheduleAll(
-    List<({int id, String title, String body, DateTime when})> alerts, {
+    List<({int id, String title, String body, DateTime when, String? subText})>
+        alerts, {
     AlertStyle style = AlertStyle.standard,
-    String? subText,
   }) async {
     if (!_ready) return;
     try {
@@ -200,7 +200,7 @@ class NotificationService {
           style: style,
           title: alert.title,
           body: alert.body,
-          subText: subText,
+          subText: alert.subText,
         );
         Future<void> schedule(AndroidScheduleMode mode) => _plugin.zonedSchedule(
               id: alert.id,

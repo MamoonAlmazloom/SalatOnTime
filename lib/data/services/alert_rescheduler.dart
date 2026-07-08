@@ -3,13 +3,12 @@ import 'dart:ui';
 import 'package:salat_app/l10n/app_localizations.dart';
 
 import '../../domain/models/prayer_timing.dart';
-import '../../domain/use_cases/leave_time_calculator.dart';
 import '../../domain/use_cases/upcoming_alerts.dart';
 import '../../ui/core/alert_messages.dart';
 import '../../ui/core/prayer_names.dart';
 import '../repositories/settings_repository.dart';
 import 'notification_service.dart';
-import 'prayer_calculator_service.dart';
+import 'schedule_builder.dart';
 
 /// Builds localized notification text. The UI injects a BuildContext-backed
 /// builder; background isolates use [notificationTextsForLocale]. [seed]
@@ -50,8 +49,7 @@ class AlertRescheduler {
   final SettingsRepository repository;
   final NotificationService notifications;
 
-  static const _calculator = PrayerCalculatorService();
-  static const _leaveCalculator = LeaveTimeCalculator();
+  static const _builder = ScheduleBuilder();
 
   /// Background entry point: no BuildContext available, so the notification
   /// language comes from storage / the device locale.
@@ -64,21 +62,27 @@ class AlertRescheduler {
     final mosque = await repository.loadMosque();
     if (mosque == null) return;
     final settings = await repository.loadSettings();
+    final jumuahMosque = await repository.loadJumuahMosque();
+    final workProfile = await repository.loadWorkProfile();
 
     final now = DateTime.now();
     final days = [
       for (var offset = 0; offset < 3; offset++)
-        _leaveCalculator.computeDay(
-          adhanTimes: _calculator.timesFor(
-            latitude: mosque.latitude,
-            longitude: mosque.longitude,
-            // Noon avoids calendar-day ambiguity in the astronomical math.
-            date: DateTime(now.year, now.month, now.day + offset, 12),
-            method: settings.calculationMethod,
-          ),
+        _builder.dayFor(
+          day: DateTime(now.year, now.month, now.day + offset),
+          mosque: mosque,
+          jumuahMosque: jumuahMosque,
+          workProfile: workProfile,
           settings: settings,
         ),
     ];
+
+    // The notification header names the mosque the alert points to.
+    String mosqueNameFor(PrayerTiming timing) {
+      if (timing.isWork) return workProfile.mosque?.name ?? mosque.name;
+      if (timing.isJumuah) return (jumuahMosque ?? mosque).name;
+      return mosque.name;
+    }
 
     final alerts = upcomingLeaveAlerts(now: now, days: days);
     await notifications.scheduleAll(
@@ -96,11 +100,11 @@ class AlertRescheduler {
               title: message.title,
               body: message.body,
               when: alert.timing.leaveTime,
+              subText: mosqueNameFor(alert.timing),
             );
           }(),
       ],
       style: settings.alertStyle,
-      subText: mosque.name,
     );
   }
 }

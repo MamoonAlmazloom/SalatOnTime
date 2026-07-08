@@ -78,11 +78,14 @@ void main() {
     expect(find.text("Today's prayers"), findsOneWidget);
 
     // The hero header leaves only a couple of prayer rows visible at once,
-    // so scroll each later prayer into view before asserting.
+    // so scroll each later prayer into view before asserting. Scope to the
+    // ListView: the hero shows the next prayer's name too.
     for (final prayer in ['Asr', 'Maghrib', 'Isha']) {
-      await tester.scrollUntilVisible(find.text(prayer), 80,
+      final row = find.descendant(
+          of: find.byType(ListView), matching: find.text(prayer));
+      await tester.scrollUntilVisible(row, 80,
           scrollable: find.byType(Scrollable).first);
-      expect(find.text(prayer), findsWidgets);
+      expect(row, findsOneWidget);
     }
 
     // Unmount to dispose the ticking view model before the test ends.

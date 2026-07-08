@@ -350,6 +350,42 @@ abstract class AppLocalizations {
   /// **'Time to the Jumu\'ah mosque (minutes)'**
   String get jumuahTravelLabel;
 
+  /// No description provided for @sectionWorkPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Second place (work / school)'**
+  String get sectionWorkPlace;
+
+  /// No description provided for @workProfileToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'I pray some prayers near work or school'**
+  String get workProfileToggle;
+
+  /// No description provided for @workProfileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'On the days you choose, the chosen prayers are calculated for this place: its mosque and its travel time.'**
+  String get workProfileHint;
+
+  /// No description provided for @workTravelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time from this place to its mosque (minutes)'**
+  String get workTravelLabel;
+
+  /// No description provided for @workPrayersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayers at this place'**
+  String get workPrayersLabel;
+
+  /// No description provided for @workDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get workDaysLabel;
+
   /// No description provided for @minutesShort.
   ///
   /// In en, this message translates to:

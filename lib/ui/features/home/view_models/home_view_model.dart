@@ -5,12 +5,11 @@ import 'package:flutter/foundation.dart';
 import '../../../../data/repositories/settings_repository.dart';
 import '../../../../data/services/alert_rescheduler.dart';
 import '../../../../data/services/notification_service.dart';
-import '../../../../data/services/prayer_calculator_service.dart';
+import '../../../../data/services/schedule_builder.dart';
 import '../../../../domain/models/mosque.dart';
-import '../../../../domain/models/prayer.dart';
 import '../../../../domain/models/prayer_timing.dart';
 import '../../../../domain/models/timing_settings.dart';
-import '../../../../domain/use_cases/leave_time_calculator.dart';
+import '../../../../domain/models/work_profile.dart';
 import '../../../../domain/use_cases/next_prayer_resolver.dart';
 
 export '../../../../data/services/alert_rescheduler.dart'
@@ -26,8 +25,7 @@ class HomeViewModel extends ChangeNotifier {
 
   final SettingsRepository _repository;
   final NotificationService _notifications;
-  static const _calculator = PrayerCalculatorService();
-  static const _leaveCalculator = LeaveTimeCalculator();
+  static const _builder = ScheduleBuilder();
   static const _resolver = NextPrayerResolver();
 
   Timer? _timer;
@@ -40,6 +38,9 @@ class HomeViewModel extends ChangeNotifier {
 
   /// Optional different mosque for Jumu'ah (null = same as [mosque]).
   Mosque? jumuahMosque;
+
+  /// The work/school second-place profile.
+  WorkProfile workProfile = const WorkProfile();
 
   /// Days added to the hijri date display (user calibration).
   int hijriAdjustment = 0;
@@ -60,6 +61,7 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> load() async {
     mosque = await _repository.loadMosque();
     jumuahMosque = await _repository.loadJumuahMosque();
+    workProfile = await _repository.loadWorkProfile();
     settings = await _repository.loadSettings();
     hijriAdjustment = await _repository.loadHijriAdjustment();
     _rebuildSchedules(DateTime.now());
@@ -86,19 +88,16 @@ class HomeViewModel extends ChangeNotifier {
     if (m == null) return;
     _scheduleDay = DateTime(now.year, now.month, now.day);
 
-    Map<Prayer, DateTime> timesFor(DateTime day) => _calculator.timesFor(
-          latitude: m.latitude,
-          longitude: m.longitude,
-          // Noon avoids calendar-day ambiguity in the astronomical math.
-          date: DateTime(day.year, day.month, day.day, 12),
-          method: settings.calculationMethod,
+    List<PrayerTiming> dayFor(DateTime day) => _builder.dayFor(
+          day: day,
+          mosque: m,
+          jumuahMosque: jumuahMosque,
+          workProfile: workProfile,
+          settings: settings,
         );
 
-    today = _leaveCalculator.computeDay(
-        adhanTimes: timesFor(now), settings: settings);
-    tomorrow = _leaveCalculator.computeDay(
-        adhanTimes: timesFor(now.add(const Duration(days: 1))),
-        settings: settings);
+    today = dayFor(now);
+    tomorrow = dayFor(now.add(const Duration(days: 1)));
   }
 
   void _tick() {
@@ -130,6 +129,15 @@ class HomeViewModel extends ChangeNotifier {
     await _syncNotifications();
   }
 
+  Future<void> updateWorkTravelMinutes(int minutes) async {
+    workProfile =
+        workProfile.copyWith(travelMinutes: minutes.clamp(0, 180));
+    await _repository.saveWorkProfile(workProfile);
+    _rebuildSchedules(DateTime.now());
+    _tick();
+    await _syncNotifications();
+  }
+
   /// Schedules leave-time notifications for the next three days via the
   /// shared rescheduler (also run by the background refresh task).
   Future<void> _syncNotifications() async {
@@ -147,6 +155,7 @@ class HomeViewModel extends ChangeNotifier {
     settings = await _repository.loadSettings();
     mosque = await _repository.loadMosque();
     jumuahMosque = await _repository.loadJumuahMosque();
+    workProfile = await _repository.loadWorkProfile();
     hijriAdjustment = await _repository.loadHijriAdjustment();
     _rebuildSchedules(DateTime.now());
     _tick();

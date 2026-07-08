@@ -85,14 +85,28 @@ class _HomeScreenState extends State<HomeScreen>
       _viewModel.status?.timing.isJumuah == true &&
       _viewModel.jumuahMosque != null;
 
+  /// Whether the hero counts down to a prayer at the work/school place.
+  bool get _heroShowsWork =>
+      _viewModel.status?.timing.isWork == true &&
+      _viewModel.workProfile.mosque != null;
+
   int get _heroTravelMinutes => _heroShowsJumuah
       ? (_viewModel.settings.jumuahTravelMinutes ??
           _viewModel.settings.travelMinutes)
-      : _viewModel.settings.travelMinutes;
+      : _heroShowsWork
+          ? _viewModel.workProfile.travelMinutes
+          : _viewModel.settings.travelMinutes;
+
+  String? get _heroMosqueName => _heroShowsJumuah
+      ? _viewModel.jumuahMosque?.name
+      : _heroShowsWork
+          ? _viewModel.workProfile.mosque?.name
+          : _viewModel.mosque?.name;
 
   Future<void> _editTravelTime() async {
     final l10n = AppLocalizations.of(context)!;
     final editingJumuah = _heroShowsJumuah;
+    final editingWork = _heroShowsWork;
     final controller = TextEditingController(text: '$_heroTravelMinutes');
     final minutes = await showDialog<int>(
       context: context,
@@ -119,6 +133,8 @@ class _HomeScreenState extends State<HomeScreen>
     if (minutes != null) {
       if (editingJumuah) {
         await _viewModel.updateJumuahTravelMinutes(minutes);
+      } else if (editingWork) {
+        await _viewModel.updateWorkTravelMinutes(minutes);
       } else {
         await _viewModel.updateTravelMinutes(minutes);
       }
@@ -144,9 +160,7 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 _HeroHeader(
                   status: status,
-                  mosqueName: _heroShowsJumuah
-                      ? _viewModel.jumuahMosque?.name
-                      : _viewModel.mosque?.name,
+                  mosqueName: _heroMosqueName,
                   travelMinutes: _heroTravelMinutes,
                   hijriAdjustment: _viewModel.hijriAdjustment,
                   onEditTravel: _editTravelTime,

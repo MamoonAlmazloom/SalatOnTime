@@ -12,7 +12,11 @@ class LeaveTimeCalculator {
     required Prayer prayer,
     required DateTime adhanTime,
     required TimingSettings settings,
+    int? workTravelMinutes,
   }) {
+    // Praying near work/school: that place's travel time replaces the
+    // home-to-mosque one (the caller decides when the profile applies).
+    final isWork = workTravelMinutes != null;
     // Friday Dhuhr is Jumu'ah: the goal is to be seated before the adhan
     // and khutbah, so the arrival target sits ahead of the adhan itself.
     final isJumuah = settings.jumuahEnabled &&
@@ -28,10 +32,10 @@ class LeaveTimeCalculator {
         ? adhanTime
             .subtract(Duration(minutes: settings.jumuahArriveEarlyMinutes))
         : (target == ArrivalTarget.adhan ? adhanTime : iqamaTime);
-    // The Jumu'ah mosque may be a different (farther) one.
+    // The Jumu'ah or work mosque may be a different (farther) one.
     final travelMinutes = isJumuah
         ? (settings.jumuahTravelMinutes ?? settings.travelMinutes)
-        : settings.travelMinutes;
+        : (workTravelMinutes ?? settings.travelMinutes);
     final leaveTime = arrivalTime.subtract(
       Duration(
         minutes: travelMinutes + settings.preparationMinutesFor(prayer),
@@ -45,6 +49,7 @@ class LeaveTimeCalculator {
       arrivalTime: arrivalTime,
       leaveTime: leaveTime,
       isJumuah: isJumuah,
+      isWork: isWork && !isJumuah,
     );
   }
 

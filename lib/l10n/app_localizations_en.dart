@@ -144,6 +144,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jumuahTravelLabel => 'Time to the Jumu\'ah mosque (minutes)';
 
   @override
+  String get sectionWorkPlace => 'Second place (work / school)';
+
+  @override
+  String get workProfileToggle => 'I pray some prayers near work or school';
+
+  @override
+  String get workProfileHint =>
+      'On the days you choose, the chosen prayers are calculated for this place: its mosque and its travel time.';
+
+  @override
+  String get workTravelLabel => 'Time from this place to its mosque (minutes)';
+
+  @override
+  String get workPrayersLabel => 'Prayers at this place';
+
+  @override
+  String get workDaysLabel => 'Days';
+
+  @override
   String get minutesShort => 'min';
 
   @override

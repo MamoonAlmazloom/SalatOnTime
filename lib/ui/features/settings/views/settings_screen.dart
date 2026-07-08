@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:salat_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -7,8 +8,11 @@ import '../../../../data/services/location_service.dart';
 import '../../../../data/services/routing_service.dart';
 import '../../../../domain/models/alert_style.dart';
 import '../../../../domain/models/mosque.dart';
+import '../../../../domain/models/prayer.dart';
 import '../../../../domain/models/timing_settings.dart';
+import '../../../../domain/models/work_profile.dart';
 import '../../../core/calculation_methods.dart';
+import '../../../core/prayer_names.dart';
 import '../../../core/theme_controller.dart';
 import '../../../core/widgets/section_title.dart';
 import '../../../core/widgets/stepper_row.dart';
@@ -34,6 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   TimingSettings? _settings;
   Mosque? _mosque;
   Mosque? _jumuahMosque;
+  WorkProfile _workProfile = const WorkProfile();
   ({double latitude, double longitude})? _home;
   int _hijriAdjustment = 0;
   bool _busyLocation = false;
@@ -49,6 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final settings = await _repository.loadSettings();
     final mosque = await _repository.loadMosque();
     final jumuahMosque = await _repository.loadJumuahMosque();
+    final workProfile = await _repository.loadWorkProfile();
     final home = await _repository.loadHomeLocation();
     final hijriAdjustment = await _repository.loadHijriAdjustment();
     if (!mounted) return;
@@ -56,9 +62,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _settings = settings;
       _mosque = mosque;
       _jumuahMosque = jumuahMosque;
+      _workProfile = workProfile;
       _home = home;
       _hijriAdjustment = hijriAdjustment;
     });
+  }
+
+  Future<void> _updateWorkProfile(WorkProfile profile) async {
+    setState(() => _workProfile = profile);
+    await _repository.saveWorkProfile(profile);
+  }
+
+  Future<void> _pickWorkMosque() async {
+    final result = await Navigator.of(context).push<Mosque>(
+      MaterialPageRoute(
+          builder: (_) =>
+              MosquePickerScreen(initial: _workProfile.mosque ?? _mosque)),
+    );
+    if (result != null) {
+      await _updateWorkProfile(_workProfile.copyWith(mosque: result));
+    }
   }
 
   Future<void> _pickJumuahMosque() async {
@@ -247,6 +270,130 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text(l10n.updateHomeLocation),
                         onTap: _busyLocation ? null : _updateHomeLocation,
                       ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SectionTitle(l10n.sectionWorkPlace),
+                Card(
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        title: Text(l10n.workProfileToggle),
+                        subtitle: Text(l10n.workProfileHint),
+                        value: _workProfile.enabled,
+                        onChanged: (v) async {
+                          await _updateWorkProfile(
+                              _workProfile.copyWith(enabled: v));
+                          if (v && _workProfile.mosque == null) {
+                            await _pickWorkMosque();
+                          }
+                        },
+                        secondary: const Icon(Icons.work_outline),
+                      ),
+                      if (_workProfile.enabled) ...[
+                        ListTile(
+                          leading: const Icon(Icons.place_outlined),
+                          title: Text(_workProfile.mosque?.name ??
+                              l10n.mosqueStepTitle),
+                          subtitle: Text(l10n.changeMosque),
+                          trailing: const _Chevron(),
+                          onTap: _pickWorkMosque,
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(l10n.workTravelLabel,
+                                    style: theme.textTheme.bodyLarge),
+                              ),
+                              StepperRow(
+                                value: _workProfile.travelMinutes,
+                                unit: l10n.minutesShort,
+                                onChanged: (v) => _updateWorkProfile(
+                                    _workProfile.copyWith(
+                                        travelMinutes: v.clamp(0, 180))),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              16, 8, 16, 0),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(l10n.workPrayersLabel,
+                                style: theme.textTheme.bodyLarge),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: [
+                              for (final prayer in Prayer.values)
+                                FilterChip(
+                                  label: Text(prayerName(l10n, prayer)),
+                                  selected:
+                                      _workProfile.prayers.contains(prayer),
+                                  onSelected: (selected) {
+                                    final prayers = {..._workProfile.prayers};
+                                    if (selected) {
+                                      prayers.add(prayer);
+                                    } else {
+                                      prayers.remove(prayer);
+                                    }
+                                    _updateWorkProfile(_workProfile
+                                        .copyWith(prayers: prayers));
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              16, 12, 16, 0),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(l10n.workDaysLabel,
+                                style: theme.textTheme.bodyLarge),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: [
+                              // Saturday-first week, matching the region.
+                              for (final weekday in const [6, 7, 1, 2, 3, 4, 5])
+                                FilterChip(
+                                  label: Text(DateFormat.E(
+                                          Localizations.localeOf(context)
+                                              .languageCode)
+                                      // 2026-01-05 is a Monday (weekday 1).
+                                      .format(DateTime(2026, 1, 4 + weekday))),
+                                  selected: _workProfile.weekdays
+                                      .contains(weekday),
+                                  onSelected: (selected) {
+                                    final days = {..._workProfile.weekdays};
+                                    if (selected) {
+                                      days.add(weekday);
+                                    } else {
+                                      days.remove(weekday);
+                                    }
+                                    _updateWorkProfile(_workProfile
+                                        .copyWith(weekdays: days));
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/models/mosque.dart';
 import '../../domain/models/timing_settings.dart';
+import '../../domain/models/work_profile.dart';
 
 /// Persists user configuration (mosque, timing settings, onboarding state)
 /// in local storage. Single source of truth for settings.
@@ -17,6 +18,7 @@ class SettingsRepository {
   static const _kLocale = 'locale';
   static const _kHijriAdjust = 'hijri_adjustment';
   static const _kJumuahMosque = 'jumuah_mosque';
+  static const _kWorkProfile = 'work_profile';
 
   Future<bool> isOnboardingComplete() async {
     final prefs = await SharedPreferences.getInstance();
@@ -116,6 +118,19 @@ class SettingsRepository {
     } else {
       await prefs.setString(_kJumuahMosque, jsonEncode(mosque.toJson()));
     }
+  }
+
+  /// The work/school second-place profile.
+  Future<WorkProfile> loadWorkProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_kWorkProfile);
+    if (raw == null) return const WorkProfile();
+    return WorkProfile.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+  }
+
+  Future<void> saveWorkProfile(WorkProfile profile) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kWorkProfile, jsonEncode(profile.toJson()));
   }
 
   /// Locale name: 'system' (default), 'ar', or 'en'.

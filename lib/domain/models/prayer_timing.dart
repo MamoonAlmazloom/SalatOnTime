@@ -17,6 +17,9 @@ class PrayerTiming {
   /// displayed and announced as Jumu'ah).
   final bool isJumuah;
 
+  /// Computed for the work/school place (its mosque and travel time).
+  final bool isWork;
+
   const PrayerTiming({
     required this.prayer,
     required this.adhanTime,
@@ -25,6 +28,7 @@ class PrayerTiming {
     required this.arrivalTime,
     required this.leaveTime,
     this.isJumuah = false,
+    this.isWork = false,
   });
 
   @override
