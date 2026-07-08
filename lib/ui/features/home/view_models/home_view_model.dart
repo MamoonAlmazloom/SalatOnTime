@@ -37,6 +37,12 @@ class HomeViewModel extends ChangeNotifier {
   /// screen shows a prominent warning, since alerts are the core feature.
   bool notificationsOff = false;
   Mosque? mosque;
+
+  /// Optional different mosque for Jumu'ah (null = same as [mosque]).
+  Mosque? jumuahMosque;
+
+  /// Days added to the hijri date display (user calibration).
+  int hijriAdjustment = 0;
   TimingSettings settings = const TimingSettings();
   List<PrayerTiming> today = const [];
   List<PrayerTiming> tomorrow = const [];
@@ -53,7 +59,9 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> load() async {
     mosque = await _repository.loadMosque();
+    jumuahMosque = await _repository.loadJumuahMosque();
     settings = await _repository.loadSettings();
+    hijriAdjustment = await _repository.loadHijriAdjustment();
     _rebuildSchedules(DateTime.now());
     loading = false;
     _tick();
@@ -83,6 +91,7 @@ class HomeViewModel extends ChangeNotifier {
           longitude: m.longitude,
           // Noon avoids calendar-day ambiguity in the astronomical math.
           date: DateTime(day.year, day.month, day.day, 12),
+          method: settings.calculationMethod,
         );
 
     today = _leaveCalculator.computeDay(
@@ -112,6 +121,15 @@ class HomeViewModel extends ChangeNotifier {
     await _syncNotifications();
   }
 
+  Future<void> updateJumuahTravelMinutes(int minutes) async {
+    settings =
+        settings.copyWith(jumuahTravelMinutes: minutes.clamp(0, 180));
+    await _repository.saveSettings(settings);
+    _rebuildSchedules(DateTime.now());
+    _tick();
+    await _syncNotifications();
+  }
+
   /// Schedules leave-time notifications for the next three days via the
   /// shared rescheduler (also run by the background refresh task).
   Future<void> _syncNotifications() async {
@@ -128,6 +146,8 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> refresh() async {
     settings = await _repository.loadSettings();
     mosque = await _repository.loadMosque();
+    jumuahMosque = await _repository.loadJumuahMosque();
+    hijriAdjustment = await _repository.loadHijriAdjustment();
     _rebuildSchedules(DateTime.now());
     _tick();
     await recheckNotificationsEnabled();

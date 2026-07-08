@@ -182,6 +182,26 @@ void main() {
       expect(t.arrivalTime, t.iqamaTime);
     });
 
+    test("Jumu'ah travel override shifts only Friday Dhuhr", () {
+      const settings = TimingSettings(
+        travelMinutes: 10,
+        wuduEnabled: false,
+        jumuahArriveEarlyMinutes: 20,
+        jumuahTravelMinutes: 25, // farther Jumu'ah mosque
+      );
+      final jumuah = calculator.compute(
+          prayer: Prayer.dhuhr, adhanTime: fridayDhuhr, settings: settings);
+      final fridayAsr = calculator.compute(
+          prayer: Prayer.asr,
+          adhanTime: DateTime(2026, 7, 10, 15, 20),
+          settings: settings);
+
+      // 12:00 - 20 early - 25 travel = 11:15
+      expect(jumuah.leaveTime, DateTime(2026, 7, 10, 11, 15));
+      // Asr still uses the daily 10-minute travel: 15:40 iqama - 10 = 15:30.
+      expect(fridayAsr.leaveTime, DateTime(2026, 7, 10, 15, 30));
+    });
+
     test("disabled Jumu'ah keeps Friday Dhuhr normal", () {
       const settings = TimingSettings(jumuahEnabled: false);
       final t = calculator.compute(
@@ -223,6 +243,8 @@ void main() {
         },
         jumuahEnabled: false,
         jumuahArriveEarlyMinutes: 35,
+        jumuahTravelMinutes: 25,
+        calculationMethod: 'egyptian',
       );
       final restored = TimingSettings.fromJson(original.toJson());
 
@@ -239,6 +261,8 @@ void main() {
       expect(restored.alertStyle, AlertStyle.alarm);
       expect(restored.jumuahEnabled, false);
       expect(restored.jumuahArriveEarlyMinutes, 35);
+      expect(restored.jumuahTravelMinutes, 25);
+      expect(restored.calculationMethod, 'egyptian');
     });
 
     test('legacy single-int bathroomMinutes migrates to every prayer', () {
@@ -253,6 +277,8 @@ void main() {
       // Pre-Jumu'ah versions get the defaults.
       expect(restored.jumuahEnabled, true);
       expect(restored.jumuahArriveEarlyMinutes, 20);
+      expect(restored.jumuahTravelMinutes, isNull);
+      expect(restored.calculationMethod, 'ummAlQura');
     });
   });
 }

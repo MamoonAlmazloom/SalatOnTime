@@ -135,6 +135,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Iqama offset and arrival target for each prayer';
 
   @override
+  String get hijriAdjustmentLabel => 'Hijri date adjustment (days)';
+
+  @override
+  String get jumuahDifferentMosqueToggle => 'Jumu\'ah at a different mosque';
+
+  @override
+  String get jumuahTravelLabel => 'Time to the Jumu\'ah mosque (minutes)';
+
+  @override
   String get minutesShort => 'min';
 
   @override
@@ -236,7 +245,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calcMethodExplanation =>
-      'Prayer times are calculated entirely on your device using the Umm al-Qura method (the official method of Saudi Arabia), based on your mosque\'s location — no internet connection is used.\n\nThe iqama time is the adhan time plus the offset you set for each prayer, and the leave-home time works backwards from your arrival target: travel time, wudu, bathroom, and safety margin.';
+      'Prayer times are calculated entirely on your device from your mosque\'s location — no internet is used. Choose the method used in your country (Umm al-Qura is the official method of Saudi Arabia).';
 
   @override
   String get okLabel => 'OK';
@@ -250,6 +259,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifOffButton => 'Enable notifications';
+
+  @override
+  String get troubleshootEntry => 'Alerts late or not working?';
+
+  @override
+  String get troubleshootIntro =>
+      'Your alerts are delivered by the phone itself, and some phone settings can silence or delay them. Go through the checks below, fix anything that needs attention, then send a test alert.';
+
+  @override
+  String get checkNotifTitle => 'Notifications';
+
+  @override
+  String get checkNotifOkBody => 'Notifications are allowed.';
+
+  @override
+  String get checkExactTitle => 'Exact-time alarms';
+
+  @override
+  String get checkExactOkBody =>
+      'The app is allowed to alert you at the exact minute.';
+
+  @override
+  String get checkExactBody =>
+      'Right now Android may delay this app\'s alerts by up to 15 minutes to save battery. Tap the button, then allow \"Alarms & reminders\".';
+
+  @override
+  String get checkBatteryTitle => 'Battery saver & sleeping apps';
+
+  @override
+  String get checkBatteryBody =>
+      'Phones — especially Samsung — put apps to sleep to save battery, which can silence alerts. Open the settings and set this app\'s battery use to \"Unrestricted\". On Samsung, also make sure it is not in the \"Sleeping apps\" list.';
+
+  @override
+  String get openSettingsLabel => 'Open settings';
+
+  @override
+  String get statusOk => 'Working';
+
+  @override
+  String get statusNeedsAttention => 'Needs attention';
+
+  @override
+  String get statusManualCheck => 'Check manually';
+
+  @override
+  String get testAlertButton => 'Send a test alert';
+
+  @override
+  String get testAlertTitle => 'Test alert 🕌';
+
+  @override
+  String get testAlertBody =>
+      'If you can see and hear this, alerts work on your phone.';
 
   @override
   String get alertStyleTitle => 'Alert style';

@@ -15,6 +15,8 @@ class SettingsRepository {
   static const _kHomeLng = 'home_longitude';
   static const _kThemeMode = 'theme_mode';
   static const _kLocale = 'locale';
+  static const _kHijriAdjust = 'hijri_adjustment';
+  static const _kJumuahMosque = 'jumuah_mosque';
 
   Future<bool> isOnboardingComplete() async {
     final prefs = await SharedPreferences.getInstance();
@@ -85,6 +87,35 @@ class SettingsRepository {
   Future<void> saveThemeModeName(String name) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kThemeMode, name);
+  }
+
+  /// Days added to the computed hijri date (-2..2) so users can match the
+  /// official calendar when the astronomical estimate drifts.
+  Future<int> loadHijriAdjustment() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_kHijriAdjust) ?? 0;
+  }
+
+  Future<void> saveHijriAdjustment(int days) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kHijriAdjust, days);
+  }
+
+  /// Optional different mosque for Jumu'ah (null = same as daily mosque).
+  Future<Mosque?> loadJumuahMosque() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_kJumuahMosque);
+    if (raw == null) return null;
+    return Mosque.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+  }
+
+  Future<void> saveJumuahMosque(Mosque? mosque) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mosque == null) {
+      await prefs.remove(_kJumuahMosque);
+    } else {
+      await prefs.setString(_kJumuahMosque, jsonEncode(mosque.toJson()));
+    }
   }
 
   /// Locale name: 'system' (default), 'ar', or 'en'.

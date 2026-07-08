@@ -8,12 +8,16 @@ class StepperRow extends StatelessWidget {
     required this.onChanged,
     this.unit,
     this.big = false,
+    this.min = 0,
   });
 
   final int value;
   final ValueChanged<int> onChanged;
   final String? unit;
   final bool big;
+
+  /// Lowest selectable value (steppers like the hijri adjustment go negative).
+  final int min;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class StepperRow extends StatelessWidget {
           big ? MainAxisAlignment.center : MainAxisAlignment.end,
       children: [
         IconButton.filledTonal(
-          onPressed: value > 0 ? () => onChanged(value - 1) : null,
+          onPressed: value > min ? () => onChanged(value - 1) : null,
           icon: const Icon(Icons.remove),
         ),
         Padding(

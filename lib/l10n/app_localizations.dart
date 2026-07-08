@@ -332,6 +332,24 @@ abstract class AppLocalizations {
   /// **'Iqama offset and arrival target for each prayer'**
   String get prayerSettingsHint;
 
+  /// No description provided for @hijriAdjustmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri date adjustment (days)'**
+  String get hijriAdjustmentLabel;
+
+  /// No description provided for @jumuahDifferentMosqueToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumu\'ah at a different mosque'**
+  String get jumuahDifferentMosqueToggle;
+
+  /// No description provided for @jumuahTravelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to the Jumu\'ah mosque (minutes)'**
+  String get jumuahTravelLabel;
+
   /// No description provided for @minutesShort.
   ///
   /// In en, this message translates to:
@@ -521,7 +539,7 @@ abstract class AppLocalizations {
   /// No description provided for @calcMethodExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Prayer times are calculated entirely on your device using the Umm al-Qura method (the official method of Saudi Arabia), based on your mosque\'s location — no internet connection is used.\n\nThe iqama time is the adhan time plus the offset you set for each prayer, and the leave-home time works backwards from your arrival target: travel time, wudu, bathroom, and safety margin.'**
+  /// **'Prayer times are calculated entirely on your device from your mosque\'s location — no internet is used. Choose the method used in your country (Umm al-Qura is the official method of Saudi Arabia).'**
   String get calcMethodExplanation;
 
   /// No description provided for @okLabel.
@@ -547,6 +565,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable notifications'**
   String get notifOffButton;
+
+  /// No description provided for @troubleshootEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts late or not working?'**
+  String get troubleshootEntry;
+
+  /// No description provided for @troubleshootIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your alerts are delivered by the phone itself, and some phone settings can silence or delay them. Go through the checks below, fix anything that needs attention, then send a test alert.'**
+  String get troubleshootIntro;
+
+  /// No description provided for @checkNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get checkNotifTitle;
+
+  /// No description provided for @checkNotifOkBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are allowed.'**
+  String get checkNotifOkBody;
+
+  /// No description provided for @checkExactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact-time alarms'**
+  String get checkExactTitle;
+
+  /// No description provided for @checkExactOkBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The app is allowed to alert you at the exact minute.'**
+  String get checkExactOkBody;
+
+  /// No description provided for @checkExactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Right now Android may delay this app\'s alerts by up to 15 minutes to save battery. Tap the button, then allow \"Alarms & reminders\".'**
+  String get checkExactBody;
+
+  /// No description provided for @checkBatteryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery saver & sleeping apps'**
+  String get checkBatteryTitle;
+
+  /// No description provided for @checkBatteryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Phones — especially Samsung — put apps to sleep to save battery, which can silence alerts. Open the settings and set this app\'s battery use to \"Unrestricted\". On Samsung, also make sure it is not in the \"Sleeping apps\" list.'**
+  String get checkBatteryBody;
+
+  /// No description provided for @openSettingsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get openSettingsLabel;
+
+  /// No description provided for @statusOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Working'**
+  String get statusOk;
+
+  /// No description provided for @statusNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get statusNeedsAttention;
+
+  /// No description provided for @statusManualCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check manually'**
+  String get statusManualCheck;
+
+  /// No description provided for @testAlertButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a test alert'**
+  String get testAlertButton;
+
+  /// No description provided for @testAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test alert 🕌'**
+  String get testAlertTitle;
+
+  /// No description provided for @testAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you can see and hear this, alerts work on your phone.'**
+  String get testAlertBody;
 
   /// No description provided for @alertStyleTitle.
   ///

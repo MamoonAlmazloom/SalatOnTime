@@ -8,9 +8,11 @@ import '../../../../data/services/routing_service.dart';
 import '../../../../domain/models/alert_style.dart';
 import '../../../../domain/models/mosque.dart';
 import '../../../../domain/models/timing_settings.dart';
+import '../../../core/calculation_methods.dart';
 import '../../../core/theme_controller.dart';
 import '../../../core/widgets/section_title.dart';
 import '../../../core/widgets/stepper_row.dart';
+import 'alert_troubleshooting_screen.dart';
 import 'mosque_picker_screen.dart';
 import 'prayer_settings_screen.dart';
 
@@ -31,7 +33,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   TimingSettings? _settings;
   Mosque? _mosque;
+  Mosque? _jumuahMosque;
   ({double latitude, double longitude})? _home;
+  int _hijriAdjustment = 0;
   bool _busyLocation = false;
   bool _busyTravel = false;
 
@@ -44,13 +48,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _load() async {
     final settings = await _repository.loadSettings();
     final mosque = await _repository.loadMosque();
+    final jumuahMosque = await _repository.loadJumuahMosque();
     final home = await _repository.loadHomeLocation();
+    final hijriAdjustment = await _repository.loadHijriAdjustment();
     if (!mounted) return;
     setState(() {
       _settings = settings;
       _mosque = mosque;
+      _jumuahMosque = jumuahMosque;
       _home = home;
+      _hijriAdjustment = hijriAdjustment;
     });
+  }
+
+  Future<void> _pickJumuahMosque() async {
+    final result = await Navigator.of(context).push<Mosque>(
+      MaterialPageRoute(
+          builder: (_) =>
+              MosquePickerScreen(initial: _jumuahMosque ?? _mosque)),
+    );
+    if (result != null) {
+      setState(() => _jumuahMosque = result);
+      await _repository.saveJumuahMosque(result);
+    }
+  }
+
+  Future<void> _pickCalculationMethod() async {
+    final l10n = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final settings = _settings!;
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.calcMethodNote),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+            child: Text(
+              l10n.calcMethodExplanation,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          RadioGroup<String>(
+            groupValue: settings.calculationMethod,
+            onChanged: (key) => Navigator.pop(context, key),
+            child: Column(
+              children: [
+                for (final option in calculationMethodOptions)
+                  RadioListTile<String>(
+                    value: option.key,
+                    dense: true,
+                    title: Text(option.label(languageCode)),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (choice != null) {
+      await _update(_settings!.copyWith(calculationMethod: choice));
+    }
   }
 
   Future<void> _update(TimingSettings updated) async {
@@ -318,7 +377,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             _update(settings.copyWith(jumuahEnabled: v)),
                         secondary: const Icon(Icons.mosque),
                       ),
-                      if (settings.jumuahEnabled)
+                      if (settings.jumuahEnabled) ...[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                           child: Row(
@@ -337,21 +396,83 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ],
                           ),
                         ),
+                        const Divider(height: 1, indent: 16, endIndent: 16),
+                        SwitchListTile(
+                          title: Text(l10n.jumuahDifferentMosqueToggle),
+                          value: _jumuahMosque != null,
+                          onChanged: (v) async {
+                            if (v) {
+                              await _pickJumuahMosque();
+                            } else {
+                              setState(() => _jumuahMosque = null);
+                              await _repository.saveJumuahMosque(null);
+                              await _update(settings.copyWith(
+                                  clearJumuahTravelMinutes: true));
+                            }
+                          },
+                          secondary: const Icon(Icons.alt_route),
+                        ),
+                        if (_jumuahMosque != null) ...[
+                          ListTile(
+                            leading: const Icon(Icons.place_outlined),
+                            title: Text(_jumuahMosque!.name),
+                            subtitle: Text(l10n.changeMosque),
+                            trailing: const _Chevron(),
+                            onTap: _pickJumuahMosque,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(l10n.jumuahTravelLabel,
+                                      style: theme.textTheme.bodyLarge),
+                                ),
+                                StepperRow(
+                                  value: settings.jumuahTravelMinutes ??
+                                      settings.travelMinutes,
+                                  unit: l10n.minutesShort,
+                                  onChanged: (v) => _update(
+                                      settings.copyWith(
+                                          jumuahTravelMinutes:
+                                              v.clamp(0, 180))),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ],
                   ),
                 ),
                 const SizedBox(height: 20),
                 SectionTitle(l10n.alertStyleTitle),
                 Card(
-                  child: ListTile(
-                    leading: Icon(settings.alertStyle == AlertStyle.alarm
-                        ? Icons.alarm
-                        : Icons.notifications_outlined),
-                    title: Text(settings.alertStyle == AlertStyle.alarm
-                        ? l10n.alertAlarm
-                        : l10n.alertStandard),
-                    trailing: const _Chevron(),
-                    onTap: _pickAlertStyle,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(settings.alertStyle == AlertStyle.alarm
+                            ? Icons.alarm
+                            : Icons.notifications_outlined),
+                        title: Text(settings.alertStyle == AlertStyle.alarm
+                            ? l10n.alertAlarm
+                            : l10n.alertStandard),
+                        trailing: const _Chevron(),
+                        onTap: _pickAlertStyle,
+                      ),
+                      const Divider(height: 1, indent: 16, endIndent: 16),
+                      ListTile(
+                        leading: const Icon(Icons.help_outline),
+                        title: Text(l10n.troubleshootEntry),
+                        trailing: const _Chevron(),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const AlertTroubleshootingScreen()),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -359,33 +480,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(14),
-                    child: ValueListenableBuilder<ThemeMode>(
-                      valueListenable: themeModeNotifier,
-                      builder: (context, mode, _) =>
-                          SegmentedButton<ThemeMode>(
-                        expandedInsets: EdgeInsets.zero,
-                        segments: [
-                          ButtonSegment(
-                            value: ThemeMode.system,
-                            label: Text(l10n.themeSystem),
+                    child: Column(
+                      children: [
+                        ValueListenableBuilder<ThemeMode>(
+                          valueListenable: themeModeNotifier,
+                          builder: (context, mode, _) =>
+                              SegmentedButton<ThemeMode>(
+                            expandedInsets: EdgeInsets.zero,
+                            segments: [
+                              ButtonSegment(
+                                value: ThemeMode.system,
+                                label: Text(l10n.themeSystem),
+                              ),
+                              ButtonSegment(
+                                value: ThemeMode.light,
+                                icon: const Icon(Icons.light_mode, size: 18),
+                                label: Text(l10n.themeLight),
+                              ),
+                              ButtonSegment(
+                                value: ThemeMode.dark,
+                                icon: const Icon(Icons.dark_mode, size: 18),
+                                label: Text(l10n.themeDark),
+                              ),
+                            ],
+                            selected: {mode},
+                            onSelectionChanged: (selection) {
+                              themeModeNotifier.value = selection.first;
+                              _repository
+                                  .saveThemeModeName(selection.first.name);
+                            },
                           ),
-                          ButtonSegment(
-                            value: ThemeMode.light,
-                            icon: const Icon(Icons.light_mode, size: 18),
-                            label: Text(l10n.themeLight),
-                          ),
-                          ButtonSegment(
-                            value: ThemeMode.dark,
-                            icon: const Icon(Icons.dark_mode, size: 18),
-                            label: Text(l10n.themeDark),
-                          ),
-                        ],
-                        selected: {mode},
-                        onSelectionChanged: (selection) {
-                          themeModeNotifier.value = selection.first;
-                          _repository.saveThemeModeName(selection.first.name);
-                        },
-                      ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(l10n.hijriAdjustmentLabel,
+                                  style: theme.textTheme.bodyLarge),
+                            ),
+                            StepperRow(
+                              value: _hijriAdjustment,
+                              min: -2,
+                              onChanged: (v) async {
+                                final days = v.clamp(-2, 2);
+                                setState(() => _hijriAdjustment = days);
+                                await _repository.saveHijriAdjustment(days);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -442,23 +586,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ListTile(
                         leading: const Icon(Icons.calculate_outlined),
                         title: Text(l10n.calcMethodNote),
-                        subtitle: const Text('Umm al-Qura'),
+                        subtitle: Text(calculationMethodLabel(
+                          settings.calculationMethod,
+                          Localizations.localeOf(context).languageCode,
+                        )),
                         trailing: const _Chevron(),
-                        onTap: () => showDialog<void>(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text(l10n.calcMethodNote),
-                            content: SingleChildScrollView(
-                              child: Text(l10n.calcMethodExplanation),
-                            ),
-                            actions: [
-                              FilledButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text(l10n.okLabel),
-                              ),
-                            ],
-                          ),
-                        ),
+                        onTap: _pickCalculationMethod,
                       ),
                     ],
                   ),

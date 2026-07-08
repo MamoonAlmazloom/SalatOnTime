@@ -30,6 +30,13 @@ class TimingSettings {
   /// Minutes before the Jumu'ah adhan the user wants to be at the mosque.
   final int jumuahArriveEarlyMinutes;
 
+  /// Travel minutes to the Jumu'ah mosque when it differs from the daily
+  /// mosque; null means Jumu'ah uses [travelMinutes].
+  final int? jumuahTravelMinutes;
+
+  /// Key of the adhan calculation method (see PrayerCalculatorService).
+  final String calculationMethod;
+
   const TimingSettings({
     this.travelMinutes = 10,
     this.wuduEnabled = true,
@@ -42,6 +49,8 @@ class TimingSettings {
     this.alertStyle = AlertStyle.standard,
     this.jumuahEnabled = true,
     this.jumuahArriveEarlyMinutes = 20,
+    this.jumuahTravelMinutes,
+    this.calculationMethod = 'ummAlQura',
   });
 
   static const Map<Prayer, int> defaultBathroomMinutes = {
@@ -87,6 +96,9 @@ class TimingSettings {
     AlertStyle? alertStyle,
     bool? jumuahEnabled,
     int? jumuahArriveEarlyMinutes,
+    int? jumuahTravelMinutes,
+    bool clearJumuahTravelMinutes = false,
+    String? calculationMethod,
   }) {
     return TimingSettings(
       travelMinutes: travelMinutes ?? this.travelMinutes,
@@ -101,6 +113,10 @@ class TimingSettings {
       jumuahEnabled: jumuahEnabled ?? this.jumuahEnabled,
       jumuahArriveEarlyMinutes:
           jumuahArriveEarlyMinutes ?? this.jumuahArriveEarlyMinutes,
+      jumuahTravelMinutes: clearJumuahTravelMinutes
+          ? null
+          : (jumuahTravelMinutes ?? this.jumuahTravelMinutes),
+      calculationMethod: calculationMethod ?? this.calculationMethod,
     );
   }
 
@@ -119,6 +135,9 @@ class TimingSettings {
         'alertStyle': alertStyle.name,
         'jumuahEnabled': jumuahEnabled,
         'jumuahArriveEarlyMinutes': jumuahArriveEarlyMinutes,
+        if (jumuahTravelMinutes != null)
+          'jumuahTravelMinutes': jumuahTravelMinutes,
+        'calculationMethod': calculationMethod,
       };
 
   factory TimingSettings.fromJson(Map<String, dynamic> json) {
@@ -140,6 +159,9 @@ class TimingSettings {
       jumuahEnabled: json['jumuahEnabled'] as bool? ?? true,
       jumuahArriveEarlyMinutes:
           json['jumuahArriveEarlyMinutes'] as int? ?? 20,
+      jumuahTravelMinutes: json['jumuahTravelMinutes'] as int?,
+      calculationMethod:
+          json['calculationMethod'] as String? ?? 'ummAlQura',
     );
   }
 

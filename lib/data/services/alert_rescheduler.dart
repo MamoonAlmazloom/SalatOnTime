@@ -74,6 +74,7 @@ class AlertRescheduler {
             longitude: mosque.longitude,
             // Noon avoids calendar-day ambiguity in the astronomical math.
             date: DateTime(now.year, now.month, now.day + offset, 12),
+            method: settings.calculationMethod,
           ),
           settings: settings,
         ),

@@ -133,6 +133,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get prayerSettingsHint => 'فاصل الإقامة وهدف الوصول لكل صلاة';
 
   @override
+  String get hijriAdjustmentLabel => 'تعديل التاريخ الهجري (أيام)';
+
+  @override
+  String get jumuahDifferentMosqueToggle => 'أصلي الجمعة في مسجد آخر';
+
+  @override
+  String get jumuahTravelLabel => 'الوقت إلى مسجد الجمعة (بالدقائق)';
+
+  @override
   String get minutesShort => 'د';
 
   @override
@@ -234,7 +243,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get calcMethodExplanation =>
-      'تُحسب مواقيت الصلاة على جهازك بالكامل بطريقة أم القرى (الطريقة المعتمدة في السعودية) اعتمادًا على موقع مسجدك — دون أي اتصال بالإنترنت.\n\nوقت الإقامة هو وقت الأذان مضافًا إليه الفاصل الذي حددته لكل صلاة، ووقت الخروج من البيت يُحسب رجوعًا من هدف وصولك: وقت الطريق، والوضوء، ودورة المياه، وهامش الأمان.';
+      'تُحسب مواقيت الصلاة على جهازك بالكامل اعتمادًا على موقع مسجدك — دون أي اتصال بالإنترنت. اختر الطريقة المعتمدة في بلدك (أم القرى هي الطريقة الرسمية في السعودية).';
 
   @override
   String get okLabel => 'حسنًا';
@@ -248,6 +257,58 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notifOffButton => 'تفعيل الإشعارات';
+
+  @override
+  String get troubleshootEntry => 'التنبيهات متأخرة أو لا تعمل؟';
+
+  @override
+  String get troubleshootIntro =>
+      'هاتفك هو من يوصل التنبيهات، وبعض إعدادات الهاتف قد تكتمها أو تؤخرها. راجع الفحوصات التالية، وأصلح ما يحتاج انتباهًا، ثم أرسل تنبيهًا تجريبيًا.';
+
+  @override
+  String get checkNotifTitle => 'الإشعارات';
+
+  @override
+  String get checkNotifOkBody => 'الإشعارات مسموح بها.';
+
+  @override
+  String get checkExactTitle => 'التنبيه في الدقيقة المحددة';
+
+  @override
+  String get checkExactOkBody =>
+      'التطبيق مسموح له بالتنبيه في الدقيقة المحددة بالضبط.';
+
+  @override
+  String get checkExactBody =>
+      'حاليًا قد يؤخّر أندرويد تنبيهات هذا التطبيق حتى ١٥ دقيقة لتوفير البطارية. اضغط الزر ثم فعّل «المنبهات والتذكيرات».';
+
+  @override
+  String get checkBatteryTitle => 'توفير البطارية والتطبيقات النائمة';
+
+  @override
+  String get checkBatteryBody =>
+      'الهواتف — وخصوصًا سامسونج — تُنيم التطبيقات لتوفير البطارية فقد تكتم التنبيهات. افتح الإعدادات واجعل استخدام البطارية لهذا التطبيق «غير مقيد»، وفي سامسونج تأكد أيضًا أنه ليس ضمن «التطبيقات النائمة».';
+
+  @override
+  String get openSettingsLabel => 'افتح الإعدادات';
+
+  @override
+  String get statusOk => 'يعمل';
+
+  @override
+  String get statusNeedsAttention => 'يحتاج انتباهًا';
+
+  @override
+  String get statusManualCheck => 'افحص يدويًا';
+
+  @override
+  String get testAlertButton => 'أرسل تنبيهًا تجريبيًا';
+
+  @override
+  String get testAlertTitle => 'تنبيه تجريبي 🕌';
+
+  @override
+  String get testAlertBody => 'إذا رأيت هذا وسمعته، فالتنبيهات تعمل على هاتفك.';
 
   @override
   String get alertStyleTitle => 'نوع التنبيه';

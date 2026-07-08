@@ -28,10 +28,13 @@ class LeaveTimeCalculator {
         ? adhanTime
             .subtract(Duration(minutes: settings.jumuahArriveEarlyMinutes))
         : (target == ArrivalTarget.adhan ? adhanTime : iqamaTime);
+    // The Jumu'ah mosque may be a different (farther) one.
+    final travelMinutes = isJumuah
+        ? (settings.jumuahTravelMinutes ?? settings.travelMinutes)
+        : settings.travelMinutes;
     final leaveTime = arrivalTime.subtract(
       Duration(
-        minutes:
-            settings.travelMinutes + settings.preparationMinutesFor(prayer),
+        minutes: travelMinutes + settings.preparationMinutesFor(prayer),
       ),
     );
     return PrayerTiming(

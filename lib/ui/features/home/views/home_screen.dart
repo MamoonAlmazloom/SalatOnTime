@@ -79,10 +79,21 @@ class _HomeScreenState extends State<HomeScreen>
     await _viewModel.refresh();
   }
 
+  /// Whether the hero is currently counting down to Jumu'ah at a dedicated
+  /// Jumu'ah mosque (name + travel in the hero then refer to that mosque).
+  bool get _heroShowsJumuah =>
+      _viewModel.status?.timing.isJumuah == true &&
+      _viewModel.jumuahMosque != null;
+
+  int get _heroTravelMinutes => _heroShowsJumuah
+      ? (_viewModel.settings.jumuahTravelMinutes ??
+          _viewModel.settings.travelMinutes)
+      : _viewModel.settings.travelMinutes;
+
   Future<void> _editTravelTime() async {
     final l10n = AppLocalizations.of(context)!;
-    final controller =
-        TextEditingController(text: '${_viewModel.settings.travelMinutes}');
+    final editingJumuah = _heroShowsJumuah;
+    final controller = TextEditingController(text: '$_heroTravelMinutes');
     final minutes = await showDialog<int>(
       context: context,
       builder: (context) => AlertDialog(
@@ -106,7 +117,11 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
     if (minutes != null) {
-      await _viewModel.updateTravelMinutes(minutes);
+      if (editingJumuah) {
+        await _viewModel.updateJumuahTravelMinutes(minutes);
+      } else {
+        await _viewModel.updateTravelMinutes(minutes);
+      }
     }
   }
 
@@ -129,8 +144,11 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 _HeroHeader(
                   status: status,
-                  mosqueName: _viewModel.mosque?.name,
-                  travelMinutes: _viewModel.settings.travelMinutes,
+                  mosqueName: _heroShowsJumuah
+                      ? _viewModel.jumuahMosque?.name
+                      : _viewModel.mosque?.name,
+                  travelMinutes: _heroTravelMinutes,
+                  hijriAdjustment: _viewModel.hijriAdjustment,
                   onEditTravel: _editTravelTime,
                   onOpenSettings: _openSettings,
                 ),
@@ -168,6 +186,7 @@ class _HeroHeader extends StatelessWidget {
     required this.status,
     required this.mosqueName,
     required this.travelMinutes,
+    required this.hijriAdjustment,
     required this.onEditTravel,
     required this.onOpenSettings,
   });
@@ -175,6 +194,7 @@ class _HeroHeader extends StatelessWidget {
   final NextPrayerStatus? status;
   final String? mosqueName;
   final int travelMinutes;
+  final int hijriAdjustment;
   final VoidCallback onEditTravel;
   final VoidCallback onOpenSettings;
 
@@ -185,7 +205,10 @@ class _HeroHeader extends StatelessWidget {
     final locale = Localizations.localeOf(context).languageCode;
     final now = DateTime.now();
     HijriCalendar.language = locale == 'ar' ? 'ar' : 'en';
-    final hijri = HijriCalendar.fromDate(now);
+    // User calibration: the astronomical estimate can drift a day or two
+    // from the official (sighting-based) calendar.
+    final hijri =
+        HijriCalendar.fromDate(now.add(Duration(days: hijriAdjustment)));
     final onHeroFaded = Colors.white.withValues(alpha: 0.7);
 
     return Container(
