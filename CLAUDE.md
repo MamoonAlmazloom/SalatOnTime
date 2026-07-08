@@ -44,22 +44,25 @@ alarm-style channel. Theme/locale: `themeModeNotifier` / `localeNotifier`
 - Privacy policy: https://mamoonalmazloom.github.io/SalatOnTime/privacy-policy (docs/ on Pages)
 - Positioning: privacy-first, "verify don't trust", never name competitor apps in official docs
 
-## Next planned work (user request, not yet started)
+## Done recently (July 2026)
 
-**Flagship UI pass on the app itself:**
-1. Fix in-app naming: `appTitle` in ARB files still says "SalatApp"/"تطبيق الصلاة" →
-   must become "Salat On Time" / "الصلاة على وقتها" (also welcomeBody mentions SalatApp).
-2. Incorporate the app logo (assets/icon/icon_foreground.png) into the UI —
-   e.g. emblem in a Home gradient hero header (like the privacy page header).
-3. Redesign the Home header to feel professional/flagship (research current patterns);
-   consider merging date/mosque/countdown into one gradient hero with the glass panel,
-   gold-bar section headers below (shared widget, reuse in Settings).
-4. General flagship polish app-wide, borrowing from the privacy page design.
+- Flagship UI pass: gradient hero Home header (logo emblem via `AppEmblem`,
+  dates, glass mosque panel + travel pill, countdown), shared gold-bar
+  `SectionTitle` in Home/Settings, app renamed in-app to "Salat On Time" /
+  "الصلاة على وقتها". Verified on emulator in en/ar, light/dark.
+- Background rescheduling: `workmanager` periodic task (12h) re-runs the shared
+  `AlertRescheduler` (`lib/data/services/`) so the 3-day notification window
+  stays topped up while the app is closed. Locale resolved without context via
+  `notificationTextsForLocale`. Verified: WorkManager revives the dead process
+  and the Dart worker returns SUCCESS. Note: a forced `cmd jobscheduler run`
+  won't execute a periodic task before its window ("executed before schedule").
+
+## Next planned work
+
+Store listing assets (feature graphic via canvas-design, screenshots, ar/en copy),
+real-device notification testing (build signed APK for the user's phone),
+Jumu'ah handling.
 Skill available for graphics work: `.agents/skills/canvas-design` (official Anthropic).
-
-Then: store listing assets (feature graphic via canvas-design, screenshots, ar/en copy),
-real-device notification testing, background rescheduling (WorkManager) so alerts
-don't run out after ~3 days unopened, Jumu'ah handling.
 
 ## graphify
 
