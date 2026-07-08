@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'تطبيق الصلاة';
+  String get appTitle => 'الصلاة على وقتها';
 
   @override
   String get welcomeTitle => 'اوصل مسجدك على الوقت';
@@ -112,6 +112,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get prayerIsha => 'العشاء';
+
+  @override
+  String get prayerJumuah => 'الجمعة';
+
+  @override
+  String get sectionJumuah => 'صلاة الجمعة';
+
+  @override
+  String get jumuahToggle => 'أحضر صلاة الجمعة';
+
+  @override
+  String get jumuahArriveEarlyLabel => 'الوصول قبل الأذان (بالدقائق)';
+
+  @override
+  String get jumuahHint =>
+      'يوم الجمعة تُحسب صلاة الظهر جمعةً: يُحسب وقت الخروج لتصل المسجد قبل الأذان بهذه الدقائق.';
+
+  @override
+  String get prayerSettingsHint => 'فاصل الإقامة وهدف الوصول لكل صلاة';
 
   @override
   String get minutesShort => 'د';

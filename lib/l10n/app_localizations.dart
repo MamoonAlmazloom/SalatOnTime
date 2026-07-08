@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'SalatApp'**
+  /// **'Salat On Time'**
   String get appTitle;
 
   /// No description provided for @welcomeTitle.
@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeBody.
   ///
   /// In en, this message translates to:
-  /// **'SalatApp tells you the exact moment to leave home so you arrive at your mosque right on time for the adhan or iqama.\n\nTo calculate accurate prayer times for your area, the app needs your location.'**
+  /// **'Salat On Time tells you the exact moment to leave home so you arrive at your mosque right on time for the adhan or iqama.\n\nTo calculate accurate prayer times for your area, the app needs your location.'**
   String get welcomeBody;
 
   /// No description provided for @allowLocation.
@@ -295,6 +295,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Isha'**
   String get prayerIsha;
+
+  /// No description provided for @prayerJumuah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumu\'ah'**
+  String get prayerJumuah;
+
+  /// No description provided for @sectionJumuah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumu\'ah'**
+  String get sectionJumuah;
+
+  /// No description provided for @jumuahToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'I attend Jumu\'ah prayer'**
+  String get jumuahToggle;
+
+  /// No description provided for @jumuahArriveEarlyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrive before the adhan (minutes)'**
+  String get jumuahArriveEarlyLabel;
+
+  /// No description provided for @jumuahHint.
+  ///
+  /// In en, this message translates to:
+  /// **'On Fridays, Dhuhr becomes Jumu\'ah: the leave time is calculated so you arrive at the mosque this many minutes before the adhan.'**
+  String get jumuahHint;
+
+  /// No description provided for @prayerSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Iqama offset and arrival target for each prayer'**
+  String get prayerSettingsHint;
 
   /// No description provided for @minutesShort.
   ///

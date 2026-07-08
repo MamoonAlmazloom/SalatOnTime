@@ -9,14 +9,14 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'SalatApp';
+  String get appTitle => 'Salat On Time';
 
   @override
   String get welcomeTitle => 'Reach your mosque on time';
 
   @override
   String get welcomeBody =>
-      'SalatApp tells you the exact moment to leave home so you arrive at your mosque right on time for the adhan or iqama.\n\nTo calculate accurate prayer times for your area, the app needs your location.';
+      'Salat On Time tells you the exact moment to leave home so you arrive at your mosque right on time for the adhan or iqama.\n\nTo calculate accurate prayer times for your area, the app needs your location.';
 
   @override
   String get allowLocation => 'Allow location';
@@ -113,6 +113,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prayerIsha => 'Isha';
+
+  @override
+  String get prayerJumuah => 'Jumu\'ah';
+
+  @override
+  String get sectionJumuah => 'Jumu\'ah';
+
+  @override
+  String get jumuahToggle => 'I attend Jumu\'ah prayer';
+
+  @override
+  String get jumuahArriveEarlyLabel => 'Arrive before the adhan (minutes)';
+
+  @override
+  String get jumuahHint =>
+      'On Fridays, Dhuhr becomes Jumu\'ah: the leave time is calculated so you arrive at the mosque this many minutes before the adhan.';
+
+  @override
+  String get prayerSettingsHint =>
+      'Iqama offset and arrival target for each prayer';
 
   @override
   String get minutesShort => 'min';
