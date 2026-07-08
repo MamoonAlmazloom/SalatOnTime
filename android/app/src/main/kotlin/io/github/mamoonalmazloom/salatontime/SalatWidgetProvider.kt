@@ -46,13 +46,11 @@ class SalatWidgetProvider : AppWidgetProvider() {
             // No data yet (or schedule exhausted): show the app name and
             // invite a tap; the app refreshes the schedule on open.
             views.setTextViewText(R.id.widget_prayer, appName(context))
-            views.setTextViewText(R.id.widget_mosque, "")
             views.setTextViewText(R.id.widget_label, "")
             views.setTextViewText(R.id.widget_leave_at, "…")
             views.setViewVisibility(R.id.widget_countdown, android.view.View.GONE)
         } else {
             views.setTextViewText(R.id.widget_prayer, next.prayer)
-            views.setTextViewText(R.id.widget_mosque, next.mosque)
             views.setTextViewText(R.id.widget_label, data.leaveLabel)
             val clock = DateFormat.getTimeFormat(context).format(Date(next.leaveMillis))
             views.setTextViewText(R.id.widget_leave_at, clock)
@@ -109,7 +107,6 @@ class SalatWidgetProvider : AppWidgetProvider() {
 
     private data class Entry(
         val prayer: String,
-        val mosque: String,
         val leaveMillis: Long,
     )
 
@@ -127,7 +124,6 @@ class SalatWidgetProvider : AppWidgetProvider() {
                     val e = list.getJSONObject(i)
                     add(Entry(
                         prayer = e.getString("n"),
-                        mosque = e.optString("m", ""),
                         leaveMillis = e.getLong("t"),
                     ))
                 }

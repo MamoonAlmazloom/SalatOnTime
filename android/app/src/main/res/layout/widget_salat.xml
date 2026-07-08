@@ -6,10 +6,10 @@
     android:background="@drawable/widget_bg"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="14dp">
+    android:padding="10dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
@@ -22,27 +22,12 @@
 
         <TextView
             android:id="@+id/widget_prayer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:gravity="start"
-            android:fontFamily="@font/tajawal_bold"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:text="" />
-
-        <TextView
-            android:id="@+id/widget_mosque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="4dp"
-            android:fontFamily="@font/tajawal_regular"
-            android:textColor="#B3FFFFFF"
-            android:textSize="12sp"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/tajawal_bold"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
             android:maxLines="1"
             android:ellipsize="end"
             android:text="" />
@@ -52,7 +37,7 @@
         android:id="@+id/widget_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:fontFamily="@font/tajawal_regular"
         android:textColor="#B3FFFFFF"
         android:textSize="12sp"
@@ -64,7 +49,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/tajawal_bold"
         android:textColor="#FFFFFF"
-        android:textSize="34sp"
+        android:textSize="30sp"
         android:visibility="gone" />
 
     <TextView
