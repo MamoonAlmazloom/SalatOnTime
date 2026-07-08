@@ -50,6 +50,7 @@ dependencies:
   url_launcher: ^6.3.2
   workmanager: ^0.9.0+3
   app_settings: ^7.0.0
+  home_widget: ^0.9.3
 
 dev_dependencies:
   flutter_test:

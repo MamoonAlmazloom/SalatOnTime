@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:home_widget/home_widget.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
 
 import '../../domain/models/prayer_timing.dart';
@@ -20,13 +22,18 @@ class NotificationTexts {
   const NotificationTexts({required this.build});
 }
 
-/// Localized texts resolved without a BuildContext: from the stored locale
-/// name, falling back to the device language (Arabic or English).
+/// The app language without a BuildContext: the stored locale name, falling
+/// back to the device language (Arabic or English).
+String resolveLanguageCode(String? localeName) => switch (localeName) {
+      'ar' || 'en' => localeName!,
+      _ => PlatformDispatcher.instance.locale.languageCode == 'ar'
+          ? 'ar'
+          : 'en',
+    };
+
+/// Localized texts resolved without a BuildContext.
 NotificationTexts notificationTextsForLocale(String? localeName) {
-  final code = switch (localeName) {
-    'ar' || 'en' => localeName!,
-    _ => PlatformDispatcher.instance.locale.languageCode == 'ar' ? 'ar' : 'en',
-  };
+  final code = resolveLanguageCode(localeName);
   final l10n = lookupAppLocalizations(Locale(code));
   return NotificationTexts(
     build: (timing, seed) => AlertMessages.pick(
@@ -106,5 +113,41 @@ class AlertRescheduler {
       ],
       style: settings.alertStyle,
     );
+
+    await _pushWidgetData(
+      days: days,
+      now: now,
+      mosqueNameFor: mosqueNameFor,
+    );
+  }
+
+  /// Hands the upcoming schedule to the home-screen widget; the native
+  /// provider picks the next entry and runs a live countdown to it.
+  Future<void> _pushWidgetData({
+    required List<List<PrayerTiming>> days,
+    required DateTime now,
+    required String Function(PrayerTiming) mosqueNameFor,
+  }) async {
+    try {
+      final code = resolveLanguageCode(await repository.loadLocaleName());
+      final l10n = lookupAppLocalizations(Locale(code));
+      final entries = [
+        for (final day in days)
+          for (final timing in day)
+            if (timing.leaveTime.isAfter(now))
+              {
+                'n': timingName(l10n, timing),
+                'm': mosqueNameFor(timing),
+                't': timing.leaveTime.millisecondsSinceEpoch,
+              },
+      ];
+      await HomeWidget.saveWidgetData<String>(
+        'schedule',
+        jsonEncode({'leaveLabel': l10n.leaveIn, 'entries': entries}),
+      );
+      await HomeWidget.updateWidget(androidName: 'SalatWidgetProvider');
+    } on Exception {
+      // The widget is best-effort; alerts must never fail because of it.
+    }
   }
 }
