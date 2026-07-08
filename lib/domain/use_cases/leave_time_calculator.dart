@@ -13,13 +13,21 @@ class LeaveTimeCalculator {
     required DateTime adhanTime,
     required TimingSettings settings,
   }) {
+    // Friday Dhuhr is Jumu'ah: the goal is to be seated before the adhan
+    // and khutbah, so the arrival target sits ahead of the adhan itself.
+    final isJumuah = settings.jumuahEnabled &&
+        prayer == Prayer.dhuhr &&
+        adhanTime.weekday == DateTime.friday;
+
     final iqamaTime = adhanTime.add(
       Duration(minutes: settings.iqamaOffsets[prayer] ?? 0),
     );
     final target =
         settings.arrivalTargets[prayer] ?? ArrivalTarget.iqama;
-    final arrivalTime =
-        target == ArrivalTarget.adhan ? adhanTime : iqamaTime;
+    final arrivalTime = isJumuah
+        ? adhanTime
+            .subtract(Duration(minutes: settings.jumuahArriveEarlyMinutes))
+        : (target == ArrivalTarget.adhan ? adhanTime : iqamaTime);
     final leaveTime = arrivalTime.subtract(
       Duration(
         minutes:
@@ -31,7 +39,9 @@ class LeaveTimeCalculator {
       adhanTime: adhanTime,
       iqamaTime: iqamaTime,
       target: target,
+      arrivalTime: arrivalTime,
       leaveTime: leaveTime,
+      isJumuah: isJumuah,
     );
   }
 

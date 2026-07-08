@@ -23,6 +23,13 @@ class TimingSettings {
   /// How the leave-time alert presents itself.
   final AlertStyle alertStyle;
 
+  /// On Fridays, treat Dhuhr as Jumu'ah: arrive before the adhan instead
+  /// of targeting adhan/iqama (khutbah attendance and a good row).
+  final bool jumuahEnabled;
+
+  /// Minutes before the Jumu'ah adhan the user wants to be at the mosque.
+  final int jumuahArriveEarlyMinutes;
+
   const TimingSettings({
     this.travelMinutes = 10,
     this.wuduEnabled = true,
@@ -33,6 +40,8 @@ class TimingSettings {
     this.iqamaOffsets = defaultIqamaOffsets,
     this.arrivalTargets = defaultArrivalTargets,
     this.alertStyle = AlertStyle.standard,
+    this.jumuahEnabled = true,
+    this.jumuahArriveEarlyMinutes = 20,
   });
 
   static const Map<Prayer, int> defaultBathroomMinutes = {
@@ -76,6 +85,8 @@ class TimingSettings {
     Map<Prayer, int>? iqamaOffsets,
     Map<Prayer, ArrivalTarget>? arrivalTargets,
     AlertStyle? alertStyle,
+    bool? jumuahEnabled,
+    int? jumuahArriveEarlyMinutes,
   }) {
     return TimingSettings(
       travelMinutes: travelMinutes ?? this.travelMinutes,
@@ -87,6 +98,9 @@ class TimingSettings {
       iqamaOffsets: iqamaOffsets ?? this.iqamaOffsets,
       arrivalTargets: arrivalTargets ?? this.arrivalTargets,
       alertStyle: alertStyle ?? this.alertStyle,
+      jumuahEnabled: jumuahEnabled ?? this.jumuahEnabled,
+      jumuahArriveEarlyMinutes:
+          jumuahArriveEarlyMinutes ?? this.jumuahArriveEarlyMinutes,
     );
   }
 
@@ -103,6 +117,8 @@ class TimingSettings {
         'arrivalTargets':
             arrivalTargets.map((p, t) => MapEntry(p.name, t.name)),
         'alertStyle': alertStyle.name,
+        'jumuahEnabled': jumuahEnabled,
+        'jumuahArriveEarlyMinutes': jumuahArriveEarlyMinutes,
       };
 
   factory TimingSettings.fromJson(Map<String, dynamic> json) {
@@ -121,6 +137,9 @@ class TimingSettings {
                   Prayer.fromName(k), ArrivalTarget.fromName(v as String))) ??
           defaultArrivalTargets,
       alertStyle: AlertStyle.fromName(json['alertStyle'] as String? ?? ''),
+      jumuahEnabled: json['jumuahEnabled'] as bool? ?? true,
+      jumuahArriveEarlyMinutes:
+          json['jumuahArriveEarlyMinutes'] as int? ?? 20,
     );
   }
 

@@ -143,6 +143,55 @@ void main() {
     });
   });
 
+  group("Jumu'ah (Friday Dhuhr)", () {
+    // 2026-07-10 is a Friday.
+    final fridayDhuhr = DateTime(2026, 7, 10, 12, 0);
+
+    test('Friday Dhuhr targets arrival before the adhan', () {
+      const settings = TimingSettings(
+        travelMinutes: 10,
+        wuduEnabled: true, // +1
+        jumuahArriveEarlyMinutes: 20,
+      );
+      final t = calculator.compute(
+          prayer: Prayer.dhuhr, adhanTime: fridayDhuhr, settings: settings);
+
+      expect(t.isJumuah, isTrue);
+      expect(t.arrivalTime, DateTime(2026, 7, 10, 11, 40)); // 12:00 - 20
+      // 11:40 - 10 travel - 1 wudu = 11:29
+      expect(t.leaveTime, DateTime(2026, 7, 10, 11, 29));
+    });
+
+    test('other Friday prayers are unaffected', () {
+      const settings = TimingSettings(travelMinutes: 10, wuduEnabled: false);
+      final asr = calculator.compute(
+          prayer: Prayer.asr,
+          adhanTime: DateTime(2026, 7, 10, 15, 20),
+          settings: settings);
+
+      expect(asr.isJumuah, isFalse);
+      expect(asr.arrivalTime, asr.iqamaTime);
+    });
+
+    test('non-Friday Dhuhr stays a normal prayer', () {
+      const settings = TimingSettings();
+      final t = calculator.compute(
+          prayer: Prayer.dhuhr, adhanTime: adhan, settings: settings);
+
+      expect(t.isJumuah, isFalse);
+      expect(t.arrivalTime, t.iqamaTime);
+    });
+
+    test("disabled Jumu'ah keeps Friday Dhuhr normal", () {
+      const settings = TimingSettings(jumuahEnabled: false);
+      final t = calculator.compute(
+          prayer: Prayer.dhuhr, adhanTime: fridayDhuhr, settings: settings);
+
+      expect(t.isJumuah, isFalse);
+      expect(t.arrivalTime, t.iqamaTime);
+    });
+  });
+
   group('TimingSettings JSON round-trip', () {
     test('all fields survive serialization', () {
       const original = TimingSettings(
@@ -172,6 +221,8 @@ void main() {
           Prayer.maghrib: ArrivalTarget.iqama,
           Prayer.isha: ArrivalTarget.iqama,
         },
+        jumuahEnabled: false,
+        jumuahArriveEarlyMinutes: 35,
       );
       final restored = TimingSettings.fromJson(original.toJson());
 
@@ -186,6 +237,8 @@ void main() {
       expect(restored.arrivalTargets[Prayer.fajr], ArrivalTarget.adhan);
       expect(restored.arrivalTargets[Prayer.isha], ArrivalTarget.iqama);
       expect(restored.alertStyle, AlertStyle.alarm);
+      expect(restored.jumuahEnabled, false);
+      expect(restored.jumuahArriveEarlyMinutes, 35);
     });
 
     test('legacy single-int bathroomMinutes migrates to every prayer', () {
@@ -197,6 +250,9 @@ void main() {
       for (final prayer in Prayer.values) {
         expect(restored.bathroomMinutes[prayer], 5);
       }
+      // Pre-Jumu'ah versions get the defaults.
+      expect(restored.jumuahEnabled, true);
+      expect(restored.jumuahArriveEarlyMinutes, 20);
     });
   });
 }

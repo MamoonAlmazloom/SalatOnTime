@@ -7,19 +7,25 @@ class PrayerTiming {
   final DateTime adhanTime;
   final DateTime iqamaTime;
   final ArrivalTarget target;
+
+  /// The time the user wants to be at the mosque: adhan or iqama for daily
+  /// prayers, a while before the adhan for Jumu'ah.
+  final DateTime arrivalTime;
   final DateTime leaveTime;
+
+  /// Friday Dhuhr computed as Jumu'ah (arrive-before-adhan target,
+  /// displayed and announced as Jumu'ah).
+  final bool isJumuah;
 
   const PrayerTiming({
     required this.prayer,
     required this.adhanTime,
     required this.iqamaTime,
     required this.target,
+    required this.arrivalTime,
     required this.leaveTime,
+    this.isJumuah = false,
   });
-
-  /// The time the user wants to be at the mosque.
-  DateTime get arrivalTime =>
-      target == ArrivalTarget.adhan ? adhanTime : iqamaTime;
 
   @override
   String toString() =>
