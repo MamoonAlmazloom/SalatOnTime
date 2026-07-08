@@ -57,11 +57,22 @@ alarm-style channel. Theme/locale: `themeModeNotifier` / `localeNotifier`
   and the Dart worker returns SUCCESS. Note: a forced `cmd jobscheduler run`
   won't execute a periodic task before its window ("executed before schedule").
 
+- Jumu'ah: Friday Dhuhr → arrive-before-adhan target, optional separate mosque +
+  travel time. Settings UX overhaul (research-based ordering, sub-pages, dialogs),
+  notifications-off warning on Home, alert troubleshooting page (permission
+  checks + test alert), hijri ±2d adjustment, calculation-method picker
+  (16 methods via `lib/ui/core/calculation_methods.dart`).
+- Release R8 crash fixed via android/app/proguard-rules.pro (WorkManager +
+  notifications keep rules) — release APK verified on emulator.
+- Git: user does NOT want Co-Authored-By Claude trailers (history was rewritten
+  and force-pushed to strip them).
+
 ## Next planned work
 
-Store listing assets (feature graphic via canvas-design, screenshots, ar/en copy),
-real-device notification testing (build signed APK for the user's phone),
-Jumu'ah handling.
+Home-screen widget (leave countdown; home_widget package, no live seconds —
+show leave time + prayer, refresh via WorkManager), logo decision (mark-studies
+sheet shown to user; dome-dial recommended), store listing assets (feature
+graphic via canvas-design, screenshots, ar/en copy), real-device testing pass.
 Skill available for graphics work: `.agents/skills/canvas-design` (official Anthropic).
 
 ## graphify
