@@ -264,7 +264,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calcMethodExplanation =>
-      'Prayer times are calculated entirely on your device from your mosque\'s location — no internet is used. Choose the method used in your country (Umm al-Qura is the official method of Saudi Arabia).';
+      'Prayer times are calculated entirely on your device from your mosque\'s location — no internet is used. The method below was set automatically from that location; change it here only if you prefer a different convention.';
+
+  @override
+  String get calcMethodAutoNote => 'set automatically from your mosque';
 
   @override
   String get okLabel => 'OK';

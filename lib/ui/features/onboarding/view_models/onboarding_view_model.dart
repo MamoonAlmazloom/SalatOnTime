@@ -7,6 +7,7 @@ import '../../../../domain/models/arrival_target.dart';
 import '../../../../domain/models/mosque.dart';
 import '../../../../domain/models/prayer.dart';
 import '../../../../domain/models/timing_settings.dart';
+import '../../../../domain/use_cases/calculation_method_locator.dart';
 
 /// Default map center when location is unavailable: Riyadh.
 const defaultLatitude = 24.7136;
@@ -144,13 +145,19 @@ class OnboardingViewModel extends ChangeNotifier {
   }
 
   Future<void> finish(String fallbackMosqueName) async {
+    // The user is never asked which calculation method their country uses —
+    // it's derived from the mosque's own coordinates, entirely offline.
+    final method = calculationMethodForLocation(
+      latitude: mosqueLatitude,
+      longitude: mosqueLongitude,
+    );
     await _repository.completeOnboarding(
       mosque: Mosque(
         name: mosqueName.trim().isEmpty ? fallbackMosqueName : mosqueName.trim(),
         latitude: mosqueLatitude,
         longitude: mosqueLongitude,
       ),
-      settings: settings,
+      settings: settings.copyWith(calculationMethod: method),
       homeLatitude: homeLatitude,
       homeLongitude: homeLongitude,
     );

@@ -575,8 +575,14 @@ abstract class AppLocalizations {
   /// No description provided for @calcMethodExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Prayer times are calculated entirely on your device from your mosque\'s location — no internet is used. Choose the method used in your country (Umm al-Qura is the official method of Saudi Arabia).'**
+  /// **'Prayer times are calculated entirely on your device from your mosque\'s location — no internet is used. The method below was set automatically from that location; change it here only if you prefer a different convention.'**
   String get calcMethodExplanation;
+
+  /// No description provided for @calcMethodAutoNote.
+  ///
+  /// In en, this message translates to:
+  /// **'set automatically from your mosque'**
+  String get calcMethodAutoNote;
 
   /// No description provided for @okLabel.
   ///

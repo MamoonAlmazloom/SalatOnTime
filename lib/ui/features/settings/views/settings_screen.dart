@@ -11,6 +11,7 @@ import '../../../../domain/models/mosque.dart';
 import '../../../../domain/models/prayer.dart';
 import '../../../../domain/models/timing_settings.dart';
 import '../../../../domain/models/work_profile.dart';
+import '../../../../domain/use_cases/calculation_method_locator.dart';
 import '../../../core/calculation_methods.dart';
 import '../../../core/prayer_names.dart';
 import '../../../core/theme_controller.dart';
@@ -147,6 +148,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (result != null) {
       setState(() => _mosque = result);
       await _repository.saveMosque(result);
+      // The calculation method follows the mosque automatically — no
+      // country picker for the user; still overridable below.
+      final method = calculationMethodForLocation(
+        latitude: result.latitude,
+        longitude: result.longitude,
+      );
+      await _update(_settings!.copyWith(calculationMethod: method));
     }
   }
 
@@ -733,10 +741,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ListTile(
                         leading: const Icon(Icons.calculate_outlined),
                         title: Text(l10n.calcMethodNote),
-                        subtitle: Text(calculationMethodLabel(
-                          settings.calculationMethod,
-                          Localizations.localeOf(context).languageCode,
-                        )),
+                        subtitle: Text(
+                          '${calculationMethodLabel(settings.calculationMethod, Localizations.localeOf(context).languageCode)}'
+                          ' · ${l10n.calcMethodAutoNote}',
+                        ),
                         trailing: const _Chevron(),
                         onTap: _pickCalculationMethod,
                       ),
