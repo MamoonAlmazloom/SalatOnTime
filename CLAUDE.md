@@ -73,12 +73,17 @@ alarm-style channel. Theme/locale: `themeModeNotifier` / `localeNotifier`
   assembles all daily schedules (home/work/Jumu'ah per prayer) for Home and
   the background rescheduler. Notifications carry per-alert mosque names.
 
+- Home-screen widget: native AppWidget (SalatWidgetProvider.kt) with a live
+  Chronometer countdown to the next leave time (ticks with zero app process,
+  verified via force-stop), fed 3 days of schedule JSON by AlertRescheduler
+  through home_widget; rollover alarm at each leave moment; resizable; no
+  mosque name (user preference).
+
 ## Next planned work
 
-Home-screen widget (leave countdown; home_widget package, no live seconds —
-show leave time + prayer, refresh via WorkManager), logo decision (mark-studies
-sheet shown to user; dome-dial recommended), store listing assets (feature
-graphic via canvas-design, screenshots, ar/en copy), real-device testing pass.
+Logo decision (mark-studies sheet shown to user; dome-dial recommended),
+store listing assets (feature graphic via canvas-design, screenshots, ar/en
+copy), real-device testing pass, then Play Store submission.
 Skill available for graphics work: `.agents/skills/canvas-design` (official Anthropic).
 
 ## graphify
