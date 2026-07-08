@@ -67,6 +67,12 @@ alarm-style channel. Theme/locale: `themeModeNotifier` / `localeNotifier`
 - Git: user does NOT want Co-Authored-By Claude trailers (history was rewritten
   and force-pushed to strip them).
 
+- Work/school profile: schedule-based second place (own mosque + travel,
+  chosen prayers/weekdays, no background location) via `WorkProfile` +
+  `ScheduleBuilder` (`lib/data/services/schedule_builder.dart`), which now
+  assembles all daily schedules (home/work/Jumu'ah per prayer) for Home and
+  the background rescheduler. Notifications carry per-alert mosque names.
+
 ## Next planned work
 
 Home-screen widget (leave countdown; home_widget package, no live seconds —
