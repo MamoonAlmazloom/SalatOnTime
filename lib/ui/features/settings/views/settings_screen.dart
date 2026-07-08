@@ -6,14 +6,13 @@ import '../../../../data/repositories/settings_repository.dart';
 import '../../../../data/services/location_service.dart';
 import '../../../../data/services/routing_service.dart';
 import '../../../../domain/models/alert_style.dart';
-import '../../../../domain/models/arrival_target.dart';
 import '../../../../domain/models/mosque.dart';
-import '../../../../domain/models/prayer.dart';
 import '../../../../domain/models/timing_settings.dart';
 import '../../../core/theme_controller.dart';
-import '../../../core/widgets/prayer_tuning_card.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../../core/widgets/stepper_row.dart';
 import 'mosque_picker_screen.dart';
+import 'prayer_settings_screen.dart';
 
 /// Full in-app settings: appearance, alerts, mosque/location, timing,
 /// and per-prayer tuning. Every change is persisted immediately; the Home
@@ -113,6 +112,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _update(_settings!.copyWith(travelMinutes: minutes));
   }
 
+  /// The two styles carry long descriptions, so they live in a dialog
+  /// instead of two tall radio tiles on the main scroll.
+  Future<void> _pickAlertStyle() async {
+    final l10n = AppLocalizations.of(context)!;
+    final settings = _settings!;
+    final choice = await showDialog<AlertStyle>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.alertStyleTitle),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+        children: [
+          RadioGroup<AlertStyle>(
+            groupValue: settings.alertStyle,
+            onChanged: (style) => Navigator.pop(context, style),
+            child: Column(
+              children: [
+                RadioListTile<AlertStyle>(
+                  value: AlertStyle.standard,
+                  title: Text(l10n.alertStandard),
+                  subtitle: Text(l10n.alertStandardDesc),
+                  secondary: const Icon(Icons.notifications),
+                ),
+                RadioListTile<AlertStyle>(
+                  value: AlertStyle.alarm,
+                  title: Text(l10n.alertAlarm),
+                  subtitle: Text(l10n.alertAlarmDesc),
+                  secondary: const Icon(Icons.alarm),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (choice != null) {
+      await _update(_settings!.copyWith(alertStyle: choice));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -126,104 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _SectionTitle(l10n.appearance),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: ValueListenableBuilder<ThemeMode>(
-                      valueListenable: themeModeNotifier,
-                      builder: (context, mode, _) =>
-                          SegmentedButton<ThemeMode>(
-                        expandedInsets: EdgeInsets.zero,
-                        segments: [
-                          ButtonSegment(
-                            value: ThemeMode.system,
-                            label: Text(l10n.themeSystem),
-                          ),
-                          ButtonSegment(
-                            value: ThemeMode.light,
-                            icon: const Icon(Icons.light_mode, size: 18),
-                            label: Text(l10n.themeLight),
-                          ),
-                          ButtonSegment(
-                            value: ThemeMode.dark,
-                            icon: const Icon(Icons.dark_mode, size: 18),
-                            label: Text(l10n.themeDark),
-                          ),
-                        ],
-                        selected: {mode},
-                        onSelectionChanged: (selection) {
-                          themeModeNotifier.value = selection.first;
-                          _repository.saveThemeModeName(selection.first.name);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _SectionTitle(l10n.language),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: ValueListenableBuilder<Locale?>(
-                      valueListenable: localeNotifier,
-                      builder: (context, locale, _) =>
-                          SegmentedButton<String>(
-                        expandedInsets: EdgeInsets.zero,
-                        segments: [
-                          ButtonSegment(
-                            value: 'system',
-                            label: Text(l10n.themeSystem),
-                          ),
-                          const ButtonSegment(
-                            value: 'ar',
-                            label: Text('العربية'),
-                          ),
-                          const ButtonSegment(
-                            value: 'en',
-                            label: Text('English'),
-                          ),
-                        ],
-                        selected: {locale?.languageCode ?? 'system'},
-                        onSelectionChanged: (selection) {
-                          final name = selection.first;
-                          localeNotifier.value = localeFromName(name);
-                          _repository.saveLocaleName(name);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _SectionTitle(l10n.alertStyleTitle),
-                Card(
-                  child: RadioGroup<AlertStyle>(
-                    groupValue: settings.alertStyle,
-                    onChanged: (style) {
-                      if (style != null) {
-                        _update(settings.copyWith(alertStyle: style));
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        RadioListTile<AlertStyle>(
-                          value: AlertStyle.standard,
-                          title: Text(l10n.alertStandard),
-                          subtitle: Text(l10n.alertStandardDesc),
-                          secondary: const Icon(Icons.notifications),
-                        ),
-                        RadioListTile<AlertStyle>(
-                          value: AlertStyle.alarm,
-                          title: Text(l10n.alertAlarm),
-                          subtitle: Text(l10n.alertAlarmDesc),
-                          secondary: const Icon(Icons.alarm),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _SectionTitle(l10n.sectionMosque),
+                SectionTitle(l10n.sectionMosque),
                 Card(
                   child: Column(
                     children: [
@@ -251,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _SectionTitle(l10n.sectionTiming),
+                SectionTitle(l10n.sectionTiming),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -343,13 +284,147 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
+                        const Divider(height: 1, indent: 16, endIndent: 16),
+                        // Set-once per-prayer detail lives on its own page.
+                        ListTile(
+                          leading: const Icon(Icons.tune),
+                          title: Text(l10n.sectionPerPrayer),
+                          subtitle: Text(l10n.prayerSettingsHint),
+                          trailing: const _Chevron(),
+                          onTap: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      const PrayerSettingsScreen()),
+                            );
+                            await _load();
+                          },
+                        ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
-                _SectionTitle(l10n.about),
+                SectionTitle(l10n.sectionJumuah),
+                Card(
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        title: Text(l10n.jumuahToggle),
+                        subtitle: Text(l10n.jumuahHint),
+                        value: settings.jumuahEnabled,
+                        onChanged: (v) =>
+                            _update(settings.copyWith(jumuahEnabled: v)),
+                        secondary: const Icon(Icons.mosque),
+                      ),
+                      if (settings.jumuahEnabled)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(l10n.jumuahArriveEarlyLabel,
+                                    style: theme.textTheme.bodyLarge),
+                              ),
+                              StepperRow(
+                                value: settings.jumuahArriveEarlyMinutes,
+                                unit: l10n.minutesShort,
+                                onChanged: (v) => _update(settings.copyWith(
+                                    jumuahArriveEarlyMinutes:
+                                        v.clamp(0, 120))),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SectionTitle(l10n.alertStyleTitle),
+                Card(
+                  child: ListTile(
+                    leading: Icon(settings.alertStyle == AlertStyle.alarm
+                        ? Icons.alarm
+                        : Icons.notifications_outlined),
+                    title: Text(settings.alertStyle == AlertStyle.alarm
+                        ? l10n.alertAlarm
+                        : l10n.alertStandard),
+                    trailing: const _Chevron(),
+                    onTap: _pickAlertStyle,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SectionTitle(l10n.appearance),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: ValueListenableBuilder<ThemeMode>(
+                      valueListenable: themeModeNotifier,
+                      builder: (context, mode, _) =>
+                          SegmentedButton<ThemeMode>(
+                        expandedInsets: EdgeInsets.zero,
+                        segments: [
+                          ButtonSegment(
+                            value: ThemeMode.system,
+                            label: Text(l10n.themeSystem),
+                          ),
+                          ButtonSegment(
+                            value: ThemeMode.light,
+                            icon: const Icon(Icons.light_mode, size: 18),
+                            label: Text(l10n.themeLight),
+                          ),
+                          ButtonSegment(
+                            value: ThemeMode.dark,
+                            icon: const Icon(Icons.dark_mode, size: 18),
+                            label: Text(l10n.themeDark),
+                          ),
+                        ],
+                        selected: {mode},
+                        onSelectionChanged: (selection) {
+                          themeModeNotifier.value = selection.first;
+                          _repository.saveThemeModeName(selection.first.name);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SectionTitle(l10n.language),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: ValueListenableBuilder<Locale?>(
+                      valueListenable: localeNotifier,
+                      builder: (context, locale, _) =>
+                          SegmentedButton<String>(
+                        expandedInsets: EdgeInsets.zero,
+                        segments: [
+                          ButtonSegment(
+                            value: 'system',
+                            label: Text(l10n.themeSystem),
+                          ),
+                          const ButtonSegment(
+                            value: 'ar',
+                            label: Text('العربية'),
+                          ),
+                          const ButtonSegment(
+                            value: 'en',
+                            label: Text('English'),
+                          ),
+                        ],
+                        selected: {locale?.languageCode ?? 'system'},
+                        onSelectionChanged: (selection) {
+                          final name = selection.first;
+                          localeNotifier.value = localeFromName(name);
+                          _repository.saveLocaleName(name);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SectionTitle(l10n.about),
                 Card(
                   child: Column(
                     children: [
@@ -372,60 +447,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
-                _SectionTitle(l10n.sectionPerPrayer),
-                for (final prayer in Prayer.values)
-                  PrayerTuningCard(
-                    prayer: prayer,
-                    iqamaOffset: settings.iqamaOffsets[prayer] ?? 0,
-                    target: settings.arrivalTargets[prayer] ??
-                        ArrivalTarget.iqama,
-                    onOffsetChanged: (v) => _update(settings.copyWith(
-                      iqamaOffsets: {
-                        ...settings.iqamaOffsets,
-                        prayer: v.clamp(0, 60),
-                      },
-                    )),
-                    onTargetChanged: (t) => _update(settings.copyWith(
-                      arrivalTargets: {
-                        ...settings.arrivalTargets,
-                        prayer: t,
-                      },
-                    )),
-                    bathroomMinutes: settings.bathroomEnabled
-                        ? (settings.bathroomMinutes[prayer] ?? 3)
-                        : null,
-                    onBathroomMinutesChanged: (v) =>
-                        _update(settings.copyWith(
-                      bathroomMinutes: {
-                        ...settings.bathroomMinutes,
-                        prayer: v.clamp(1, 30),
-                      },
-                    )),
-                  ),
               ],
             ),
     );
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.title);
-
-  final String title;
+/// Direction-aware trailing chevron for navigation rows.
+class _Chevron extends StatelessWidget {
+  const _Chevron();
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8, top: 4),
-      child: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+    return Icon(rtl ? Icons.chevron_left : Icons.chevron_right);
   }
 }

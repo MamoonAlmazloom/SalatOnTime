@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
 
 import '../../../core/app_theme.dart';
+import '../../../core/widgets/app_emblem.dart';
 import '../view_models/onboarding_view_model.dart';
 
 class WelcomeStep extends StatelessWidget {
@@ -40,7 +41,7 @@ class WelcomeStep extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(Icons.mosque, size: 64, color: Colors.white),
+              child: const Center(child: AppEmblem(size: 96)),
             ),
           ),
           const SizedBox(height: 32),

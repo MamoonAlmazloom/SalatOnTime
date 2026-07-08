@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
@@ -11,6 +12,8 @@ import '../../../core/alert_messages.dart';
 import '../../../core/app_theme.dart';
 import '../../../core/prayer_icons.dart';
 import '../../../core/prayer_names.dart';
+import '../../../core/widgets/app_emblem.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../settings/views/settings_screen.dart';
 import '../view_models/home_view_model.dart';
 
@@ -42,10 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final l10n = AppLocalizations.of(context)!;
     final languageCode = Localizations.localeOf(context).languageCode;
     _viewModel.notificationTexts = NotificationTexts(
-      build: (prayer, seed) => AlertMessages.pick(
+      build: (timing, seed) => AlertMessages.pick(
         languageCode: languageCode,
         seed: seed,
-        prayerName: prayerName(l10n, prayer),
+        prayerName: timingName(l10n, timing),
       ),
     );
   }
@@ -56,10 +59,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<void> _openSettings() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+    );
+    await _viewModel.refresh();
+  }
+
   Future<void> _editTravelTime() async {
     final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController(
-        text: '${_viewModel.settings.travelMinutes}');
+    final controller =
+        TextEditingController(text: '${_viewModel.settings.travelMinutes}');
     final minutes = await showDialog<int>(
       context: context,
       builder: (context) => AlertDialog(
@@ -91,66 +101,65 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              );
-              await _viewModel.refresh();
-            },
-          ),
-        ],
-      ),
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, _) {
-          if (_viewModel.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final status = _viewModel.status;
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _DateHeader(
-                mosqueName: _viewModel.mosque?.name,
-                travelMinutes: _viewModel.settings.travelMinutes,
-                onEditTravel: _editTravelTime,
-              ),
-              const SizedBox(height: 16),
-              if (status != null) _NextPrayerCard(status: status),
-              const SizedBox(height: 24),
-              Text(l10n.todaysPrayers,
-                  style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              for (final timing in _viewModel.today)
-                _PrayerRow(
-                  timing: timing,
-                  isNext: status?.timing.prayer == timing.prayer &&
-                      status?.timing.adhanTime == timing.adhanTime,
+    // The hero gradient sits behind the status bar, so its icons stay white.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        body: ListenableBuilder(
+          listenable: _viewModel,
+          builder: (context, _) {
+            if (_viewModel.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final status = _viewModel.status;
+            return Column(
+              children: [
+                _HeroHeader(
+                  status: status,
+                  mosqueName: _viewModel.mosque?.name,
+                  travelMinutes: _viewModel.settings.travelMinutes,
+                  onEditTravel: _editTravelTime,
+                  onOpenSettings: _openSettings,
                 ),
-            ],
-          );
-        },
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+                    children: [
+                      SectionTitle(l10n.todaysPrayers),
+                      for (final timing in _viewModel.today)
+                        _PrayerRow(
+                          timing: timing,
+                          isNext: status?.timing.prayer == timing.prayer &&
+                              status?.timing.adhanTime == timing.adhanTime,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class _DateHeader extends StatelessWidget {
-  const _DateHeader({
+/// Full-bleed gradient hero: brand row, dates, mosque glass panel, and the
+/// live leave-home countdown — the privacy-page header brought into the app.
+class _HeroHeader extends StatelessWidget {
+  const _HeroHeader({
+    required this.status,
     required this.mosqueName,
     required this.travelMinutes,
     required this.onEditTravel,
+    required this.onOpenSettings,
   });
 
+  final NextPrayerStatus? status;
   final String? mosqueName;
   final int travelMinutes;
   final VoidCallback onEditTravel;
+  final VoidCallback onOpenSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -160,45 +169,99 @@ class _DateHeader extends StatelessWidget {
     final now = DateTime.now();
     HijriCalendar.language = locale == 'ar' ? 'ar' : 'en';
     final hijri = HijriCalendar.fromDate(now);
+    final onHeroFaded = Colors.white.withValues(alpha: 0.7);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          hijri.toFormat('dd MMMM yyyy'),
-          style: theme.textTheme.titleLarge,
-        ),
-        Text(
-          DateFormat.yMMMMEEEEd(locale).format(now),
-          style: theme.textTheme.bodyMedium
-              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-        ),
-        if (mosqueName != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Row(
-              children: [
-                Icon(Icons.mosque,
-                    size: 18, color: theme.colorScheme.primary),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(mosqueName!, style: theme.textTheme.bodyLarge),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: AppTheme.heroGradient(theme.colorScheme),
+        borderRadius:
+            const BorderRadius.vertical(bottom: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.seed.withValues(alpha: 0.35),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.fromLTRB(
+          20, MediaQuery.paddingOf(context).top + 8, 20, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const AppEmblem(size: 40),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.appTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                ActionChip(
-                  avatar: const Icon(Icons.directions_walk, size: 18),
-                  label: Text('$travelMinutes ${l10n.minutesShort}'),
-                  onPressed: onEditTravel,
-                ),
-              ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                color: Colors.white,
+                onPressed: onOpenSettings,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            hijri.toFormat('dd MMMM yyyy'),
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
             ),
           ),
-      ],
+          Text(
+            DateFormat.yMMMMEEEEd(locale).format(now),
+            style: theme.textTheme.bodyMedium?.copyWith(color: onHeroFaded),
+          ),
+          if (mosqueName != null) ...[
+            const SizedBox(height: 14),
+            _GlassPanel(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.mosque, size: 18, color: AppTheme.gold),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      mosqueName!,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _TravelPill(
+                    minutes: travelMinutes,
+                    unit: l10n.minutesShort,
+                    onTap: onEditTravel,
+                  ),
+                ],
+              ),
+            ),
+          ],
+          if (status != null) ...[
+            const SizedBox(height: 18),
+            _HeroCountdown(status: status!),
+          ],
+        ],
+      ),
     );
   }
 }
 
-class _NextPrayerCard extends StatelessWidget {
-  const _NextPrayerCard({required this.status});
+class _HeroCountdown extends StatelessWidget {
+  const _HeroCountdown({required this.status});
 
   final NextPrayerStatus status;
 
@@ -225,89 +288,139 @@ class _NextPrayerCard extends StatelessWidget {
         : leaveSoon
             ? AppTheme.gold
             : Colors.white;
-    const onHero = Colors.white;
     final onHeroFaded = Colors.white.withValues(alpha: 0.7);
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: AppTheme.heroGradient(theme.colorScheme),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.seed.withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      children: [
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(prayerIcon(status.timing.prayer),
-                  color: onHeroFaded, size: 22),
+              Icon(timingIcon(status.timing), color: onHeroFaded, size: 22),
               const SizedBox(width: 8),
               Text(
-                prayerName(l10n, status.timing.prayer),
+                timingName(l10n, status.timing),
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  color: onHero,
+                  color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            leaveOverdue ? l10n.leaveNow : l10n.leaveIn,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w500,
-            ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          leaveOverdue ? l10n.leaveNow : l10n.leaveIn,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: accent,
+            fontWeight: FontWeight.w500,
           ),
-          Text(
-            leaveOverdue ? '00:00' : _countdown(leave),
-            style: theme.textTheme.displayLarge?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w700,
-              fontSize: 64,
-              height: 1.1,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
+        ),
+        Text(
+          leaveOverdue ? '00:00' : _countdown(leave),
+          style: theme.textTheme.displayLarge?.copyWith(
+            color: accent,
+            fontWeight: FontWeight.w700,
+            fontSize: 60,
+            height: 1.1,
+            fontFeatures: const [FontFeature.tabularFigures()],
           ),
-          Text(
-            clock.format(status.timing.leaveTime),
-            style: theme.textTheme.bodyMedium?.copyWith(color: onHeroFaded),
+        ),
+        Text(
+          clock.format(status.timing.leaveTime),
+          style: theme.textTheme.bodyMedium?.copyWith(color: onHeroFaded),
+        ),
+        const SizedBox(height: 14),
+        _GlassPanel(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            children: [
+              _CountdownRow(
+                label: status.untilAdhan.isNegative
+                    ? l10n.adhanPassed
+                    : l10n.adhanIn,
+                countdown: status.untilAdhan.isNegative
+                    ? null
+                    : _countdown(status.untilAdhan),
+                time: clock.format(status.timing.adhanTime),
+              ),
+              const SizedBox(height: 8),
+              _CountdownRow(
+                label: l10n.iqamaIn,
+                countdown: _countdown(status.untilIqama),
+                time: clock.format(status.timing.iqamaTime),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                _CountdownRow(
-                  label: status.untilAdhan.isNegative
-                      ? l10n.adhanPassed
-                      : l10n.adhanIn,
-                  countdown: status.untilAdhan.isNegative
-                      ? null
-                      : _countdown(status.untilAdhan),
-                  time: clock.format(status.timing.adhanTime),
+        ),
+      ],
+    );
+  }
+}
+
+/// White ~10% alpha panel used on the hero gradient (design language).
+class _GlassPanel extends StatelessWidget {
+  const _GlassPanel({required this.child, required this.padding});
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _TravelPill extends StatelessWidget {
+  const _TravelPill({
+    required this.minutes,
+    required this.unit,
+    required this.onTap,
+  });
+
+  final int minutes;
+  final String unit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      color: Colors.white.withValues(alpha: 0.14),
+      borderRadius: BorderRadius.circular(999),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.directions_walk,
+                  size: 16, color: Colors.white),
+              const SizedBox(width: 4),
+              Text(
+                '$minutes $unit',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: 8),
-                _CountdownRow(
-                  label: l10n.iqamaIn,
-                  countdown: _countdown(status.untilIqama),
-                  time: clock.format(status.timing.iqamaTime),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.edit,
+                  size: 12, color: Colors.white.withValues(alpha: 0.7)),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -385,7 +498,7 @@ class _PrayerRow extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              prayerIcon(timing.prayer),
+              timingIcon(timing),
               size: 20,
               color: isNext ? scheme.primary : scheme.onSurfaceVariant,
             ),
@@ -393,7 +506,7 @@ class _PrayerRow extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              prayerName(l10n, timing.prayer),
+              timingName(l10n, timing),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: isNext ? FontWeight.w700 : FontWeight.w500,
               ),

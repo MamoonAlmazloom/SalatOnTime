@@ -77,12 +77,13 @@ void main() {
     expect(find.text('Fajr'), findsWidgets);
     expect(find.text("Today's prayers"), findsOneWidget);
 
-    // Later prayers sit below the fold in the test viewport.
-    await tester.drag(find.byType(ListView), const Offset(0, -400));
-    await tester.pump();
-    expect(find.text('Asr'), findsWidgets);
-    expect(find.text('Maghrib'), findsWidgets);
-    expect(find.text('Isha'), findsWidgets);
+    // The hero header leaves only a couple of prayer rows visible at once,
+    // so scroll each later prayer into view before asserting.
+    for (final prayer in ['Asr', 'Maghrib', 'Isha']) {
+      await tester.scrollUntilVisible(find.text(prayer), 80,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text(prayer), findsWidgets);
+    }
 
     // Unmount to dispose the ticking view model before the test ends.
     await tester.pumpWidget(const SizedBox());
