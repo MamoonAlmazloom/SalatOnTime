@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Same emerald hero gradient as widget_bg, fully rounded for pill layouts. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="315"
+        android:startColor="#16A385"
+        android:centerColor="#0E7C66"
+        android:endColor="#07473C" />
+    <corners android:radius="40dp" />
+</shape>
