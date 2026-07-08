@@ -61,6 +61,52 @@ class NotificationService {
     }
   }
 
+  /// Whether Android allows this app to fire alarms at the exact minute.
+  /// When false, alerts may be delayed up to ~15 minutes by battery saving.
+  Future<bool> canScheduleExact() async {
+    if (!_ready) return true;
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      if (android == null) return true;
+      return await android.canScheduleExactNotifications() ?? true;
+    } on Exception {
+      return true;
+    }
+  }
+
+  /// Opens the system "Alarms & reminders" screen for this app (Android 12+).
+  Future<void> requestExactAlarms() async {
+    if (!_ready) return;
+    try {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestExactAlarmsPermission();
+    } on Exception {
+      // Best-effort; the troubleshooting screen explains the manual path.
+    }
+  }
+
+  /// Fires an immediate notification so the user can verify sound and style.
+  Future<void> showTest({
+    required String title,
+    required String body,
+    AlertStyle style = AlertStyle.standard,
+  }) async {
+    if (!_ready) return;
+    try {
+      await _plugin.show(
+        id: 9999,
+        title: title,
+        body: body,
+        notificationDetails: _details(style: style, title: title, body: body),
+      );
+    } on Exception {
+      // A failed test notification must not crash the settings UI.
+    }
+  }
+
   /// Requests notification (and Android exact-alarm) permissions.
   Future<void> requestPermissions() async {
     if (!_ready) return;
