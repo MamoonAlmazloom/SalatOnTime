@@ -32,6 +32,10 @@ class HomeViewModel extends ChangeNotifier {
 
   Timer? _timer;
   bool loading = true;
+
+  /// True when the user has notifications disabled for the app — the Home
+  /// screen shows a prominent warning, since alerts are the core feature.
+  bool notificationsOff = false;
   Mosque? mosque;
   TimingSettings settings = const TimingSettings();
   List<PrayerTiming> today = const [];
@@ -55,7 +59,18 @@ class HomeViewModel extends ChangeNotifier {
     _tick();
     _timer ??= Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     await _notifications.requestPermissions();
+    await recheckNotificationsEnabled();
     await _syncNotifications();
+  }
+
+  /// Re-reads the notification permission (e.g. after returning from the
+  /// system settings screen) and updates the Home warning.
+  Future<void> recheckNotificationsEnabled() async {
+    final enabled = await _notifications.notificationsEnabled();
+    if (notificationsOff != !enabled) {
+      notificationsOff = !enabled;
+      notifyListeners();
+    }
   }
 
   void _rebuildSchedules(DateTime now) {
@@ -115,6 +130,7 @@ class HomeViewModel extends ChangeNotifier {
     mosque = await _repository.loadMosque();
     _rebuildSchedules(DateTime.now());
     _tick();
+    await recheckNotificationsEnabled();
     await _syncNotifications();
   }
 

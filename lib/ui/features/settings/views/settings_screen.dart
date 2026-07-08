@@ -443,6 +443,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         leading: const Icon(Icons.calculate_outlined),
                         title: Text(l10n.calcMethodNote),
                         subtitle: const Text('Umm al-Qura'),
+                        trailing: const _Chevron(),
+                        onTap: () => showDialog<void>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(l10n.calcMethodNote),
+                            content: SingleChildScrollView(
+                              child: Text(l10n.calcMethodExplanation),
+                            ),
+                            actions: [
+                              FilledButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(l10n.okLabel),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),

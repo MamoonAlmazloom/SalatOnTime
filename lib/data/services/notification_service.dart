@@ -41,6 +41,26 @@ class NotificationService {
     }
   }
 
+  /// Whether the user currently allows this app to post notifications.
+  /// Returns true when unknown (e.g. tests without the plugin) so the UI
+  /// never nags without evidence.
+  Future<bool> notificationsEnabled() async {
+    if (!_ready) return true;
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      if (android != null) {
+        return await android.areNotificationsEnabled() ?? true;
+      }
+      final ios = _plugin.resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>();
+      final options = await ios?.checkPermissions();
+      return options?.isEnabled ?? true;
+    } on Exception {
+      return true;
+    }
+  }
+
   /// Requests notification (and Android exact-alarm) permissions.
   Future<void> requestPermissions() async {
     if (!_ready) return;

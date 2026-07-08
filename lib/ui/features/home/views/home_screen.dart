@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -27,16 +28,27 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with WidgetsBindingObserver {
   late final HomeViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _viewModel = HomeViewModel(
       repository: SettingsRepository(),
       notifications: widget.notificationService ?? NotificationService.instance,
     )..load();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Coming back from the system settings screen: re-check permissions so
+    // the notifications-off warning disappears as soon as it is fixed.
+    if (state == AppLifecycleState.resumed) {
+      _viewModel.recheckNotificationsEnabled();
+    }
   }
 
   @override
@@ -55,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _viewModel.dispose();
     super.dispose();
   }
@@ -125,6 +138,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
                     children: [
+                      if (_viewModel.notificationsOff) ...[
+                        const _NotificationsOffCard(),
+                        const SizedBox(height: 16),
+                      ],
                       SectionTitle(l10n.todaysPrayers),
                       for (final timing in _viewModel.today)
                         _PrayerRow(
@@ -354,6 +371,68 @@ class _HeroCountdown extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Urgent, tappable warning shown when the app is not allowed to post
+/// notifications — without them the core leave-time alert cannot work.
+class _NotificationsOffCard extends StatelessWidget {
+  const _NotificationsOffCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.errorContainer,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: scheme.error.withValues(alpha: 0.35)),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.notifications_off, color: scheme.error),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.notifOffTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: scheme.onErrorContainer,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.notifOffBody,
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(color: scheme.onErrorContainer),
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: scheme.error,
+                foregroundColor: scheme.onError,
+              ),
+              onPressed: () => AppSettings.openAppSettings(
+                  type: AppSettingsType.notification),
+              icon: const Icon(Icons.notifications_active),
+              label: Text(l10n.notifOffButton),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

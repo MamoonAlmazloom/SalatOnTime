@@ -235,6 +235,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calcMethodNote => 'Prayer time calculation method';
 
   @override
+  String get calcMethodExplanation =>
+      'Prayer times are calculated entirely on your device using the Umm al-Qura method (the official method of Saudi Arabia), based on your mosque\'s location — no internet connection is used.\n\nThe iqama time is the adhan time plus the offset you set for each prayer, and the leave-home time works backwards from your arrival target: travel time, wudu, bathroom, and safety margin.';
+
+  @override
+  String get okLabel => 'OK';
+
+  @override
+  String get notifOffTitle => 'Notifications are off';
+
+  @override
+  String get notifOffBody =>
+      'Leave-time alerts are the heart of this app — with notifications off it cannot tell you when to leave for prayer. Please turn them on.';
+
+  @override
+  String get notifOffButton => 'Enable notifications';
+
+  @override
   String get alertStyleTitle => 'Alert style';
 
   @override

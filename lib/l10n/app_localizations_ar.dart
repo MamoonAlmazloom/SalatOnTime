@@ -233,6 +233,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calcMethodNote => 'طريقة حساب مواقيت الصلاة';
 
   @override
+  String get calcMethodExplanation =>
+      'تُحسب مواقيت الصلاة على جهازك بالكامل بطريقة أم القرى (الطريقة المعتمدة في السعودية) اعتمادًا على موقع مسجدك — دون أي اتصال بالإنترنت.\n\nوقت الإقامة هو وقت الأذان مضافًا إليه الفاصل الذي حددته لكل صلاة، ووقت الخروج من البيت يُحسب رجوعًا من هدف وصولك: وقت الطريق، والوضوء، ودورة المياه، وهامش الأمان.';
+
+  @override
+  String get okLabel => 'حسنًا';
+
+  @override
+  String get notifOffTitle => 'الإشعارات متوقفة';
+
+  @override
+  String get notifOffBody =>
+      'تنبيهات وقت الخروج هي جوهر هذا التطبيق — مع إيقاف الإشعارات لن يستطيع إخبارك متى تخرج للصلاة. فعّلها من فضلك.';
+
+  @override
+  String get notifOffButton => 'تفعيل الإشعارات';
+
+  @override
   String get alertStyleTitle => 'نوع التنبيه';
 
   @override

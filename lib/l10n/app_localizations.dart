@@ -518,6 +518,36 @@ abstract class AppLocalizations {
   /// **'Prayer time calculation method'**
   String get calcMethodNote;
 
+  /// No description provided for @calcMethodExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer times are calculated entirely on your device using the Umm al-Qura method (the official method of Saudi Arabia), based on your mosque\'s location — no internet connection is used.\n\nThe iqama time is the adhan time plus the offset you set for each prayer, and the leave-home time works backwards from your arrival target: travel time, wudu, bathroom, and safety margin.'**
+  String get calcMethodExplanation;
+
+  /// No description provided for @okLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get okLabel;
+
+  /// No description provided for @notifOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notifOffTitle;
+
+  /// No description provided for @notifOffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave-time alerts are the heart of this app — with notifications off it cannot tell you when to leave for prayer. Please turn them on.'**
+  String get notifOffBody;
+
+  /// No description provided for @notifOffButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable notifications'**
+  String get notifOffButton;
+
   /// No description provided for @alertStyleTitle.
   ///
   /// In en, this message translates to:
