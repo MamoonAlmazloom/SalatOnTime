@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../../../data/repositories/settings_repository.dart';
+import '../../../../data/services/alert_rescheduler.dart';
 import '../../../../data/services/notification_service.dart';
 import '../../../../data/services/prayer_calculator_service.dart';
 import '../../../../domain/models/mosque.dart';
@@ -11,16 +12,9 @@ import '../../../../domain/models/prayer_timing.dart';
 import '../../../../domain/models/timing_settings.dart';
 import '../../../../domain/use_cases/leave_time_calculator.dart';
 import '../../../../domain/use_cases/next_prayer_resolver.dart';
-import '../../../../domain/use_cases/upcoming_alerts.dart';
 
-/// Builds localized notification text, injected from the widget layer
-/// (view models have no BuildContext). [seed] selects one of the rotating
-/// ayah/hadith message variants.
-class NotificationTexts {
-  final ({String title, String body}) Function(Prayer prayer, int seed) build;
-
-  const NotificationTexts({required this.build});
-}
+export '../../../../data/services/alert_rescheduler.dart'
+    show NotificationTexts;
 
 /// Drives the Home screen: loads configuration, builds today's and
 /// tomorrow's schedules, and ticks every second to refresh countdowns.
@@ -103,45 +97,15 @@ class HomeViewModel extends ChangeNotifier {
     await _syncNotifications();
   }
 
-  /// Schedules leave-time notifications for the next three days.
+  /// Schedules leave-time notifications for the next three days via the
+  /// shared rescheduler (also run by the background refresh task).
   Future<void> _syncNotifications() async {
-    final m = mosque;
     final texts = _texts;
-    if (m == null || texts == null || today.isEmpty) return;
-
-    final now = DateTime.now();
-    final dayAfter = _leaveCalculator.computeDay(
-      adhanTimes: _calculator.timesFor(
-        latitude: m.latitude,
-        longitude: m.longitude,
-        date: DateTime(now.year, now.month, now.day + 2, 12),
-      ),
-      settings: settings,
-    );
-    final alerts = upcomingLeaveAlerts(
-      now: now,
-      days: [today, tomorrow, dayAfter],
-    );
-    await _notifications.scheduleAll(
-      [
-        for (final alert in alerts)
-          () {
-            // Seed varies by prayer (id) and by calendar day so the same
-            // prayer gets a different message tomorrow.
-            final message = texts.build(
-              alert.timing.prayer,
-              alert.id + alert.timing.leaveTime.day * 3,
-            );
-            return (
-              id: alert.id,
-              title: message.title,
-              body: message.body,
-              when: alert.timing.leaveTime,
-            );
-          }(),
-      ],
-      style: settings.alertStyle,
-    );
+    if (mosque == null || texts == null) return;
+    await AlertRescheduler(
+      repository: _repository,
+      notifications: _notifications,
+    ).reschedule(texts: texts);
   }
 
   /// Re-reads settings from storage (e.g. after the Settings screen closes)

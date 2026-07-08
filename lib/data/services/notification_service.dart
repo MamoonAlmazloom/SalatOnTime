@@ -25,7 +25,9 @@ class NotificationService {
       tz.setLocalLocation(tz.getLocation(info.identifier));
 
       const initSettings = InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        // Dedicated monochrome status-bar icon (white mosque silhouette);
+        // the launcher icon would render as a flat blob up there.
+        android: AndroidInitializationSettings('ic_notification'),
         iOS: DarwinInitializationSettings(
           // Permissions are requested explicitly via requestPermissions().
           requestAlertPermission: false,
@@ -60,51 +62,80 @@ class NotificationService {
     }
   }
 
-  static const _standardDetails = NotificationDetails(
-    android: AndroidNotificationDetails(
-      'leave_alerts',
-      'Leave-time alerts | تنبيهات وقت الخروج',
-      channelDescription:
-          'Alerts fired when it is time to leave home for prayer',
-      importance: Importance.max,
-      priority: Priority.high,
-      category: AndroidNotificationCategory.reminder,
-    ),
-    iOS: DarwinNotificationDetails(
-      interruptionLevel: InterruptionLevel.timeSensitive,
-    ),
-  );
+  /// Brand emerald: tints the small icon and app name in the notification.
+  static const _brandColor = Color(0xFF0E7C66);
 
-  /// Alarm-style: plays on the alarm audio stream (rings through silent
-  /// mode on most devices) and takes the screen when the phone is locked.
-  static const _alarmDetails = NotificationDetails(
-    android: AndroidNotificationDetails(
-      'leave_alerts_alarm',
-      'Alarm-style leave alerts | تنبيهات بصوت المنبّه',
-      channelDescription:
-          'Loud alarm-like alerts fired when it is time to leave for prayer',
-      importance: Importance.max,
-      priority: Priority.max,
-      category: AndroidNotificationCategory.alarm,
-      audioAttributesUsage: AudioAttributesUsage.alarm,
-      fullScreenIntent: true,
-    ),
-    iOS: DarwinNotificationDetails(
-      interruptionLevel: InterruptionLevel.timeSensitive,
-    ),
-  );
+  /// Per-notification details: emerald accent, the logo as large icon, and
+  /// BigText so the full ayah/hadith reads elegantly when expanded.
+  /// Alarm-style plays on the alarm audio stream (rings through silent mode
+  /// on most devices) and takes the screen when the phone is locked.
+  static NotificationDetails _details({
+    required AlertStyle style,
+    required String title,
+    required String body,
+    String? subText,
+  }) {
+    const largeIcon = DrawableResourceAndroidBitmap('ic_notification_large');
+    final styleInformation = BigTextStyleInformation(
+      body,
+      contentTitle: title,
+    );
+    final android = style == AlertStyle.alarm
+        ? AndroidNotificationDetails(
+            'leave_alerts_alarm',
+            'Alarm-style leave alerts | تنبيهات بصوت المنبّه',
+            channelDescription:
+                'Loud alarm-like alerts fired when it is time to leave for prayer',
+            importance: Importance.max,
+            priority: Priority.max,
+            category: AndroidNotificationCategory.alarm,
+            audioAttributesUsage: AudioAttributesUsage.alarm,
+            fullScreenIntent: true,
+            color: _brandColor,
+            largeIcon: largeIcon,
+            styleInformation: styleInformation,
+            subText: subText,
+            ticker: title,
+          )
+        : AndroidNotificationDetails(
+            'leave_alerts',
+            'Leave-time alerts | تنبيهات وقت الخروج',
+            channelDescription:
+                'Alerts fired when it is time to leave home for prayer',
+            importance: Importance.max,
+            priority: Priority.high,
+            category: AndroidNotificationCategory.reminder,
+            color: _brandColor,
+            largeIcon: largeIcon,
+            styleInformation: styleInformation,
+            subText: subText,
+            ticker: title,
+          );
+    return NotificationDetails(
+      android: android,
+      iOS: const DarwinNotificationDetails(
+        interruptionLevel: InterruptionLevel.timeSensitive,
+      ),
+    );
+  }
 
-  /// Cancels everything and schedules the given alerts.
+  /// Cancels everything and schedules the given alerts. [subText] shows in
+  /// the notification header (e.g. the mosque name).
   Future<void> scheduleAll(
     List<({int id, String title, String body, DateTime when})> alerts, {
     AlertStyle style = AlertStyle.standard,
+    String? subText,
   }) async {
     if (!_ready) return;
     try {
       await _plugin.cancelAll();
-      final details =
-          style == AlertStyle.alarm ? _alarmDetails : _standardDetails;
       for (final alert in alerts) {
+        final details = _details(
+          style: style,
+          title: alert.title,
+          body: alert.body,
+          subText: subText,
+        );
         Future<void> schedule(AndroidScheduleMode mode) => _plugin.zonedSchedule(
               id: alert.id,
               title: alert.title,

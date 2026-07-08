@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:salat_app/l10n/app_localizations.dart';
 
 import 'data/repositories/settings_repository.dart';
+import 'data/services/background_refresh.dart';
 import 'data/services/location_service.dart';
 import 'data/services/notification_service.dart';
 import 'data/services/routing_service.dart';
@@ -14,6 +15,7 @@ import 'ui/features/onboarding/views/onboarding_flow.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.instance.initialize();
+  await registerBackgroundRefresh();
   final repository = SettingsRepository();
   final onboarded = await repository.isOnboardingComplete();
   themeModeNotifier.value =
